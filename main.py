@@ -1,10 +1,10 @@
 from tkinter import *
-
+from mainFunction import pdfFunction
 
 def Menu_MergePDF():
     print('Menu_MergePDF')
-    window_MergePDF = Tk()
-    window_MergePDF.mainloop()
+    w1 = Tk()
+    w1.mainloop()
     pass
 def Menu_SplitPDF():
     print('Menu_SplitPDF')
