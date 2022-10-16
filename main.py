@@ -10,6 +10,7 @@ def MenuMergePDF():
     root.destroy()
     w1 = Tk()
     w1.geometry('1000x550+300+100')
+    w1.resizable(False, False)
     
     
     # backend
@@ -49,7 +50,7 @@ def MenuMergePDF():
             lib1.delete(select)
             lib1.insert(select, data_below)
     
-    def clear():
+    def clear():    
         lib1.delete(0, END)
         
     def compute():
@@ -82,7 +83,7 @@ def MenuMergePDF():
     
     f1 = Frame(w1, bd=10, cursor='arrow')
     f1.option_add('*font', '"Angsana New" 18')
-    lb1 = Label(f1, text='PDF Merger', font='Impact 20')
+    lb1 = Label(f1, text='- PDF Merger -', font='Impact 20')
     lb2 = Label(f1, text='Choose Files')
     lib1 = Listbox(f1, width=80, height=8)
     bn1 = Button(f1, text='Open Files', width=10, command=openFiles)
@@ -110,6 +111,7 @@ def MenuSplitPDF():
     root.destroy()
     w2 = Tk()
     w2.geometry('800x500+200+200')
+    w2.resizable(False, False)
     
     
     # Backend 
@@ -157,8 +159,15 @@ def MenuSplitPDF():
                     print(path)
                     print('start :', start_page)
                     print('end :', end_page)
-                    pdfFunction.splitPDF(f_name, path, start_page, end_page)
-                    showinfo('Success', 'Export file Success :)')
+                    try:
+                        pdfFunction.splitPDF(f_name, path, start_page, end_page)
+                    except:
+                        showerror('Error', 'Something error')
+                    finally:
+                        if os.path.exists(path):
+                            showinfo('Success', 'Export file Success!')
+                        else:
+                            showwarning('Fail', 'Unable to export file')
     
     def clear():
         global f_name
@@ -180,7 +189,7 @@ def MenuSplitPDF():
     
     f1 = Frame(w2)
     f1.option_add('*font', '"Angsana New" 18')
-    lb0 = Label(w2, text='Split PDF', font='Impact 20')
+    lb0 = Label(w2, text='- Split PDF -', font='Impact 20')
     lb0.pack()
     lb1 = Label(f1, text='Select PDF File:')
     lb1.grid(row=0, column=0)
@@ -263,8 +272,17 @@ def MenuImage2PDF():
             if path:
                 files_path = [lib1.get(order) for order in range(lib1.size())]
                 files = [open(f, mode='rb') for f in files_path]
-                pdfFunction.image2pdf(files, path)
-                [i.close() for i in files]
+                try:
+                    pdfFunction.image2pdf(files, path)
+                    if os.path.exists(path):
+                        showinfo('Success', 'Export file Success :)')
+                    else:
+                        showwarning('Fail', 'Unable to export file')
+                except:
+                    showerror('Something error', 'There is something happened')
+                finally:
+                    [i.close() for i in files]
+                    
         else:
             showwarning('File not found', 'Please choose file first')
         
@@ -278,7 +296,7 @@ def MenuImage2PDF():
     
     f1 = Frame(w3, bd=10, cursor='arrow')
     f1.option_add('*font', '"Angsana New" 18')
-    lb1 = Label(f1, text='Image to PDF Converter', font='Impact 20')
+    lb1 = Label(f1, text='- Image to PDF Converter -', font='Impact 20')
     lb2 = Label(f1, text='Choose Files')
     lib1 = Listbox(f1, width=80, height=8)
     bn1 = Button(f1, text='Open Files', width=8, command=openFiles)
@@ -306,6 +324,7 @@ def MenuPDF2Image():
     root.destroy()
     w4 = Tk()
     w4.geometry('1000x600+200+200')
+    w4.resizable(False, False)
     
     # Backend 
     def back2Main():
@@ -355,7 +374,15 @@ def MenuPDF2Image():
                 #files = [open(f, mode='rb') for f in files_path]
                 format = cb.get()
                 format = (format.split('.')[-1]).lower()
-                pdfFunction.pdf2image(files_path, path, format)
+                print(format)
+                try:
+                    pdfFunction.pdf2image(files_path, path, format)
+                    if os.path.exists(path):
+                        showinfo('Success', 'Export Success!')
+                    else:
+                        showwarning('Fail', 'Unable to export file')
+                except:
+                    showerror('Error', 'Something error')
         else:
             showwarning('File not found', 'Please input file first')
         
@@ -368,7 +395,7 @@ def MenuPDF2Image():
     
     f1 = Frame(w4, bd=10, cursor='arrow')
     f1.option_add('*font', '"Angsana New" 18')
-    lb1 = Label(f1, text='PDF to Image Converter', font='Impact 20')
+    lb1 = Label(f1, text='- PDF to Image Converter -', font='Impact 20')
     lb2 = Label(f1, text='Choose Files')
     lib1 = Listbox(f1, width=80, height=8)
     bn1 = Button(f1, text='Open Files', width=8, command=openFiles)
@@ -394,7 +421,7 @@ def MenuPDF2Image():
     lb3 = Label(f1, text='Choose Format')
     lb3.grid(row=2, columnspan=3)
     cb.grid(row=3, columnspan=3)
-    bn7 = Button(f1, text='Convert', bg='green', fg='white', width=8, command=compute)
+    bn7 = Button(f1, text='Export', bg='green', fg='white', width=8, command=compute)
     bn7.grid(row=4, columnspan=3, pady=10, sticky='n')
     f1.pack(pady=20)
 
@@ -404,6 +431,7 @@ def MenuCompressPDF():
     root.destroy()
     w5 = Tk()
     w5.geometry('1000x600+200+200')
+    w5.resizable(False, False)
     
     # Backend 
     def back2Main():
@@ -491,7 +519,7 @@ def MenuCompressPDF():
     cb['state'] = 'readonly'
     cb.current(0)
     cb.grid(row=3, columnspan=3)
-    bn7 = Button(f1, text='Convert', bg='green', fg='white', width=8, command=compute)
+    bn7 = Button(f1, text='Export', bg='green', fg='white', width=8, command=compute)
     bn7.grid(row=4, columnspan=3, pady=10, sticky='n')
     f1.pack(pady=20)
     
@@ -503,6 +531,7 @@ def MenuProtectPDF():
     root.destroy()
     w6 = Tk()
     w6.geometry('1000x500+200+200')
+    w6.resizable(False, False)
     
     # Backend 
     def back2Main():
@@ -535,8 +564,8 @@ def MenuProtectPDF():
                         pdfFunction.protectPFD(f, path, password)
                         showinfo('Success', 'Protected Success!!')
                         clear_password()
-                    else:
-                        showwarning('Password not match', f'{"Password not match"}\n{"Please try again"}')
+                else:
+                    showwarning('Password not match', f'{"Password not match"}\n{"Please try again"}')
             else:
                 showwarning('Wrong Format', f'Please input password')
 
