@@ -667,7 +667,7 @@ def mainMenu():
     top_img = ImageTk.PhotoImage(file='image/Top.png')
     Label(root, image=top_img).pack()
 
-    #main_img = ImageTk.PhotoImage(file='image/FrameMain.png')
+    main_img = ImageTk.PhotoImage(file='image/FrameMain.png')
     frame_main = Frame(root, width=1158, height=532, bg='#ffffff')
     main_img_background = Label(frame_main, image=main_img).pack()
     frame_main.place(x=61, y=170)
