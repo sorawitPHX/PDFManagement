@@ -496,6 +496,9 @@ def MenuCompressPDF():
                 files_path = [lib1.get(order) for order in range(lib1.size())]
                 #files = [open(f, mode='rb') for f in files_path]
                 compre_lev = cb.get()
+                pdfFunction.compressPDF(files_path, path, compre_lev)
+                showinfo('Success', 'Export file success')
+                '''
                 try:
                     pdfFunction.compressPDF(files_path, path, compre_lev)
                     if os.path.exists(path):
@@ -504,6 +507,7 @@ def MenuCompressPDF():
                         showwarning('Fail', 'Unable to export file')
                 except:
                     showerror('Error', 'Something error')
+                '''
         else:
             showwarning('File not found', 'Please input file first')
         
@@ -538,7 +542,8 @@ def MenuCompressPDF():
     lb3 = Label(f1, text='Choose Compression Level')
     lb3.grid(row=2, columnspan=3)
     cb = Combobox(f1, width=28)
-    cb['values'] = ('Less quality, High Compression', 'Good quality, Good Compression', 'High Quality, Less Compression')
+    #cb['values'] = ('Less quality, High Compression', 'Good quality, Good Compression', 'High Quality, Less Compression')
+    cb['values'] = ['High Quality, Less Compression']
     cb['state'] = 'readonly'
     cb.current(0)
     cb.grid(row=3, columnspan=3)
