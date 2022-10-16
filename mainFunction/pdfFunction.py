@@ -63,7 +63,7 @@ def pdf2image(files : list, path, format):
             page.save(f'{path}/{file_name}/Page{index2}.{format}')
 
 
-def compressPDF(files, path):
+def compressPDF(files, path, compress_level):
     
     pass
 

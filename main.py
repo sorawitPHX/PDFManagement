@@ -63,7 +63,7 @@ def MenuMergePDF():
                     files = [open(i, 'rb') for i in files]
                     pdfFunction.mergePDF(files, path)
                 except:
-                    showerror('Fail', 'Merge Fail!')
+                    showerror('Fail', 'Something wrong')
                 finally:
                     [i.close() for i in files]
                     print([i.closed for i in files])
