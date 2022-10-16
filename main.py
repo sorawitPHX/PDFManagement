@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter.filedialog import *
 from tkinter.messagebox import *
 from tkinter.ttk import Combobox
+from PIL import ImageTk
 from mainFunction import pdfFunction
 from PyPDF2 import *
 import os
@@ -23,32 +24,35 @@ def MenuMergePDF():
         for index, f in enumerate(fs):
             lib1.insert(index, f.name)
         
-    def delete():
-        select = lib1.curselection()
-        lib1.delete(select)
-        select_data = lib1.get(select)
-        print(select)
-        print(select_data)
+    def delete_ele():
+        if lib1.size() > 0:
+            select = lib1.curselection()
+            lib1.delete(select)
+            select_data = lib1.get(select)
+            print(select)
+            print(select_data)
     
     def up():
-        select = lib1.curselection()
-        if select[0] != 0:
-            current_data = lib1.get(select)
-            data_above = lib1.get(select[0]-1)
-            lib1.delete(select[0]-1)
-            lib1.insert(select[0]-1, current_data)
-            lib1.delete(select)
-            lib1.insert(select, data_above)
+        if lib1.size() > 0:
+            select = lib1.curselection()
+            if select[0] != 0:
+                current_data = lib1.get(select)
+                data_above = lib1.get(select[0]-1)
+                lib1.delete(select[0]-1)
+                lib1.insert(select[0]-1, current_data)
+                lib1.delete(select)
+                lib1.insert(select, data_above)
     
     def down():
-        select = lib1.curselection()
-        if select[0] != lib1.size()-1:
-            current_data = lib1.get(select)
-            data_below = lib1.get(select[0]+1)
-            lib1.delete(select[0]+1)
-            lib1.insert(select[0]+1, current_data)
-            lib1.delete(select)
-            lib1.insert(select, data_below)
+        if lib1.size() > 0:
+            select = lib1.curselection()
+            if select[0] != lib1.size()-1:
+                current_data = lib1.get(select)
+                data_below = lib1.get(select[0]+1)
+                lib1.delete(select[0]+1)
+                lib1.insert(select[0]+1, current_data)
+                lib1.delete(select)
+                lib1.insert(select, data_below)
     
     def clear():    
         lib1.delete(0, END)
@@ -63,15 +67,16 @@ def MenuMergePDF():
                 try:
                     files = [open(i, 'rb') for i in files]
                     pdfFunction.mergePDF(files, path)
+                    if os.path.exists(path):
+                        showinfo('Success', 'Export file success!')
+                    else:
+                        showerror('Fail', 'Unable to export file')
                 except:
                     showerror('Fail', 'Something wrong')
                 finally:
                     [i.close() for i in files]
                     print([i.closed for i in files])
-                    if os.path.exists(path):
-                        showinfo('Success', 'Merge Success!')
-                    else:
-                        showerror('Fail', 'Merge Fail!')
+
         else:
             showwarning('Cannot Merge', 'There are no files')
     
@@ -93,7 +98,7 @@ def MenuMergePDF():
     bn1.grid(row=1, column=2, padx=5)
     f2 = Frame(f1)
     f2.grid(row=1, column=0)
-    bn2 = Button(f2, text='Delete', width=8, command=delete)
+    bn2 = Button(f2, text='Delete', width=8, command=delete_ele)
     bn3 = Button(f2, text='Up', width=8, command=up)
     bn4 = Button(f2, text='Down', width=8, command=down)
     bn5 = Button(f2, text='Clear', width=8, command=clear)
@@ -161,13 +166,12 @@ def MenuSplitPDF():
                     print('end :', end_page)
                     try:
                         pdfFunction.splitPDF(f_name, path, start_page, end_page)
-                    except:
-                        showerror('Error', 'Something error')
-                    finally:
                         if os.path.exists(path):
                             showinfo('Success', 'Export file Success!')
                         else:
                             showwarning('Fail', 'Unable to export file')
+                    except:
+                        showerror('Error', 'Something error')
     
     def clear():
         global f_name
@@ -234,32 +238,35 @@ def MenuImage2PDF():
         for index, f in enumerate(fs):
             lib1.insert(index, f.name)
         
-    def delete():
-        select = lib1.curselection()
-        lib1.delete(select)
-        select_data = lib1.get(select)
-        print(select)
-        print(select_data)
+    def delete_ele():
+        if lib1.size() > 0:
+            select = lib1.curselection()
+            lib1.delete(select)
+            select_data = lib1.get(select)
+            print(select)
+            print(select_data)
     
     def up():
-        select = lib1.curselection()
-        if select[0] != 0:
-            current_data = lib1.get(select)
-            data_above = lib1.get(select[0]-1)
-            lib1.delete(select[0]-1)
-            lib1.insert(select[0]-1, current_data)
-            lib1.delete(select)
-            lib1.insert(select, data_above)
+        if lib1.size() > 0:
+            select = lib1.curselection()
+            if select[0] != 0:
+                current_data = lib1.get(select)
+                data_above = lib1.get(select[0]-1)
+                lib1.delete(select[0]-1)
+                lib1.insert(select[0]-1, current_data)
+                lib1.delete(select)
+                lib1.insert(select, data_above)
     
     def down():
-        select = lib1.curselection()
-        if select[0] != lib1.size()-1:
-            current_data = lib1.get(select)
-            data_below = lib1.get(select[0]+1)
-            lib1.delete(select[0]+1)
-            lib1.insert(select[0]+1, current_data)
-            lib1.delete(select)
-            lib1.insert(select, data_below)
+        if lib1.size() > 0:
+            select = lib1.curselection()
+            if select[0] != lib1.size()-1:
+                current_data = lib1.get(select)
+                data_below = lib1.get(select[0]+1)
+                lib1.delete(select[0]+1)
+                lib1.insert(select[0]+1, current_data)
+                lib1.delete(select)
+                lib1.insert(select, data_below)
     
     def clear():
         lib1.delete(0, END)
@@ -275,7 +282,7 @@ def MenuImage2PDF():
                 try:
                     pdfFunction.image2pdf(files, path)
                     if os.path.exists(path):
-                        showinfo('Success', 'Export file Success :)')
+                        showinfo('Success', 'Export file Success!')
                     else:
                         showwarning('Fail', 'Unable to export file')
                 except:
@@ -306,7 +313,7 @@ def MenuImage2PDF():
     bn1.grid(row=1, column=2, padx=5)
     f2 = Frame(f1)
     f2.grid(row=1, column=0)
-    bn2 = Button(f2, text='Delete', width=8, command=delete)
+    bn2 = Button(f2, text='Delete', width=8, command=delete_ele)
     bn3 = Button(f2, text='Up', width=8, command=up)
     bn4 = Button(f2, text='Down', width=8, command=down)
     bn5 = Button(f2, text='Clear', width=8, command=clear)
@@ -336,32 +343,35 @@ def MenuPDF2Image():
         for index, f in enumerate(fs):
             lib1.insert(index, f.name)
         
-    def delete():
-        select = lib1.curselection()
-        lib1.delete(select)
-        select_data = lib1.get(select)
-        print(select)
-        print(select_data)
+    def delete_ele():
+        if lib1.size() > 0:
+            select = lib1.curselection()
+            lib1.delete(select)
+            select_data = lib1.get(select)
+            print(select)
+            print(select_data)
     
     def up():
-        select = lib1.curselection()
-        if select[0] != 0:
-            current_data = lib1.get(select)
-            data_above = lib1.get(select[0]-1)
-            lib1.delete(select[0]-1)
-            lib1.insert(select[0]-1, current_data)
-            lib1.delete(select)
-            lib1.insert(select, data_above)
+        if lib1.size() > 0:
+            select = lib1.curselection()
+            if select[0] != 0:
+                current_data = lib1.get(select)
+                data_above = lib1.get(select[0]-1)
+                lib1.delete(select[0]-1)
+                lib1.insert(select[0]-1, current_data)
+                lib1.delete(select)
+                lib1.insert(select, data_above)
     
     def down():
-        select = lib1.curselection()
-        if select[0] != lib1.size()-1:
-            current_data = lib1.get(select)
-            data_below = lib1.get(select[0]+1)
-            lib1.delete(select[0]+1)
-            lib1.insert(select[0]+1, current_data)
-            lib1.delete(select)
-            lib1.insert(select, data_below)
+        if lib1.size() > 0:
+            select = lib1.curselection()
+            if select[0] != lib1.size()-1:
+                current_data = lib1.get(select)
+                data_below = lib1.get(select[0]+1)
+                lib1.delete(select[0]+1)
+                lib1.insert(select[0]+1, current_data)
+                lib1.delete(select)
+                lib1.insert(select, data_below)
     
     def clear():
         lib1.delete(0, END)
@@ -376,9 +386,12 @@ def MenuPDF2Image():
                 format = (format.split('.')[-1]).lower()
                 print(format)
                 try:
-                    pdfFunction.pdf2image(files_path, path, format)
+                    output = pdfFunction.pdf2image(files_path, path, format)
+                    if output == False:
+                        showwarning('Fail', 'Unable to export file because the same files have been exist')
+                        return
                     if os.path.exists(path):
-                        showinfo('Success', 'Export Success!')
+                        showinfo('Success', 'Export file success!')
                     else:
                         showwarning('Fail', 'Unable to export file')
                 except:
@@ -405,7 +418,7 @@ def MenuPDF2Image():
     bn1.grid(row=1, column=2, padx=5)
     f2 = Frame(f1)
     f2.grid(row=1, column=0)
-    bn2 = Button(f2, text='Delete', width=8, command=delete)
+    bn2 = Button(f2, text='Delete', width=8, command=delete_ele)
     bn3 = Button(f2, text='Up', width=8, command=up)
     bn4 = Button(f2, text='Down', width=8, command=down)
     bn5 = Button(f2, text='Clear', width=8, command=clear)
@@ -443,32 +456,35 @@ def MenuCompressPDF():
         for index, f in enumerate(fs):
             lib1.insert(index, f.name)
         
-    def delete():
-        select = lib1.curselection()
-        lib1.delete(select)
-        select_data = lib1.get(select)
-        print(select)
-        print(select_data)
+    def delete_ele():
+        if lib1.size() > 0:
+            select = lib1.curselection()
+            lib1.delete(select)
+            select_data = lib1.get(select)
+            print(select)
+            print(select_data)
     
     def up():
-        select = lib1.curselection()
-        if select[0] != 0:
-            current_data = lib1.get(select)
-            data_above = lib1.get(select[0]-1)
-            lib1.delete(select[0]-1)
-            lib1.insert(select[0]-1, current_data)
-            lib1.delete(select)
-            lib1.insert(select, data_above)
+        if lib1.size() > 0:
+            select = lib1.curselection()
+            if select[0] != 0:
+                current_data = lib1.get(select)
+                data_above = lib1.get(select[0]-1)
+                lib1.delete(select[0]-1)
+                lib1.insert(select[0]-1, current_data)
+                lib1.delete(select)
+                lib1.insert(select, data_above)
     
     def down():
-        select = lib1.curselection()
-        if select[0] != lib1.size()-1:
-            current_data = lib1.get(select)
-            data_below = lib1.get(select[0]+1)
-            lib1.delete(select[0]+1)
-            lib1.insert(select[0]+1, current_data)
-            lib1.delete(select)
-            lib1.insert(select, data_below)
+        if lib1.size() > 0:
+            select = lib1.curselection()
+            if select[0] != lib1.size()-1:
+                current_data = lib1.get(select)
+                data_below = lib1.get(select[0]+1)
+                lib1.delete(select[0]+1)
+                lib1.insert(select[0]+1, current_data)
+                lib1.delete(select)
+                lib1.insert(select, data_below)
     
     def clear():
         lib1.delete(0, END)
@@ -480,7 +496,14 @@ def MenuCompressPDF():
                 files_path = [lib1.get(order) for order in range(lib1.size())]
                 #files = [open(f, mode='rb') for f in files_path]
                 compre_lev = cb.get()
-                pdfFunction.pdf2image(files_path, path, compre_lev)
+                try:
+                    pdfFunction.compressPDF(files_path, path, compre_lev)
+                    if os.path.exists(path):
+                        showinfo('Success', 'Export file success')
+                    else:
+                        showwarning('Fail', 'Unable to export file')
+                except:
+                    showerror('Error', 'Something error')
         else:
             showwarning('File not found', 'Please input file first')
         
@@ -503,7 +526,7 @@ def MenuCompressPDF():
     bn1.grid(row=1, column=2, padx=5)
     f2 = Frame(f1)
     f2.grid(row=1, column=0)
-    bn2 = Button(f2, text='Delete', width=8, command=delete)
+    bn2 = Button(f2, text='Delete', width=8, command=delete_ele)
     bn3 = Button(f2, text='Up', width=8, command=up)
     bn4 = Button(f2, text='Down', width=8, command=down)
     bn5 = Button(f2, text='Clear', width=8, command=clear)
@@ -561,9 +584,15 @@ def MenuProtectPDF():
                     path = asksaveasfilename(filetypes=[('PDF File', '*.pdf')], defaultextension=[('PDF File', '*.pdf')])
                     if path:
                         password = tb2.get()
-                        pdfFunction.protectPFD(f, path, password)
-                        showinfo('Success', 'Protected Success!!')
-                        clear_password()
+                        try:
+                            pdfFunction.protectPFD(f, path, password)
+                            if os.path.exists(path):
+                                showinfo('Success', 'Protected Success!')
+                                clear_password()
+                            else:
+                                showwarning('Fail', 'Unable to export file')
+                        except:
+                            showerror('Error', 'Something error')
                 else:
                     showwarning('Password not match', f'{"Password not match"}\n{"Please try again"}')
             else:
@@ -635,10 +664,10 @@ def mainMenu():
     root.resizable(width=False, height=False)
     root.configure(background='#f3f0ec')
 
-    top_img = PhotoImage(file='image/Top.png')
+    top_img = ImageTk.PhotoImage(file='image/Top.png')
     Label(root, image=top_img).pack()
 
-    main_img = PhotoImage(file='image/FrameMain.png')
+    #main_img = ImageTk.PhotoImage(file='image/FrameMain.png')
     frame_main = Frame(root, width=1158, height=532, bg='#ffffff')
     main_img_background = Label(frame_main, image=main_img).pack()
     frame_main.place(x=61, y=170)

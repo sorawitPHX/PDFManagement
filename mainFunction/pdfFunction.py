@@ -52,20 +52,26 @@ def image2pdf(files, path=''):
 
 
 def pdf2image(files : list, path, format):
-    for index1, file in enumerate(files):
-        file_name = file.split('/')[-1]
-        file_name = file_name.split('.')
-        file_name = file_name[0]
-        print(file_name)
-        os.mkdir(f'{path}/{file_name}')
-        pdf = convert_from_path(file)
-        for index2, page in enumerate(pdf):
-            page.save(f'{path}/{file_name}/Page{index2}.{format}')
+    if os.path.exists(path):
+        print(os.path.exists(path))
+        return False
+    else:
+        for index1, file in enumerate(files):
+            file_name = file.split('/')[-1]
+            file_name = file_name.split('.')
+            file_name = file_name[0]
+            print(file_name)
+            os.mkdir(f'{path}/{file_name}')
+            pdf = convert_from_path(file)
+            for index2, page in enumerate(pdf):
+                print(page)
+                page.save(f'{path}/{file_name}/Page{index2}.{format}')
 
 
 def compressPDF(files, path, compress_level):
-    
-    pass
+    print(files)
+    print(path)
+    print(compress_level)
 
 
 
