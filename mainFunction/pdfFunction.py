@@ -1,4 +1,4 @@
-from PyPDF2 import PdfMerger
+from PyPDF2 import *
 
 def meargePDF(files, path : str):
     new = PdfMerger()
@@ -11,6 +11,8 @@ def meargePDF(files, path : str):
     new.write(f'{path}')
     print('-- Merged file complete --')
     new.close()
+
+
 
 if __name__ == '__main__':
     files = list()

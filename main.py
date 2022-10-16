@@ -1,19 +1,18 @@
 from tkinter import *
 from tkinter.filedialog import *
-from unicodedata import name
 from mainFunction import pdfFunction
-
-def Back2Main():
-    pass
-
 
 def MenuMergePDF():
     root.destroy()
     w1 = Tk()
-    w1.geometry('800x600')
+    w1.geometry('800x500')
     
     
     # backend
+    def back2Main():
+        w1.destroy()
+        mainMenu()
+    
     def openFiles():
         global fs
         fs = askopenfiles(mode='r', filetypes=[('PDF File', '*.pdf')])
@@ -25,15 +24,28 @@ def MenuMergePDF():
         show_choose_files.configure(text=show)
         
     def compute():
+        print(fs)
         path = asksaveasfile(filetypes=[('PDF File', '*.pdf')], defaultextension=[('PDF File', '*.pdf')])
         pdfFunction.meargePDF(fs, path.name)
     
     
     # widget
+    f0 = Frame(w1)
+    Button(f0, text='Back to main', font='10', command=back2Main).pack(padx=10, side='left')
+    f0.pack()
+    
     f1 = Frame(w1, bd=10, cursor='arrow')
-    Label(f1, text='Choose Files', font='Arial 16').grid(row=0, column=0, padx=5, sticky='e')
-    Button(f1, text='Open Files', font='Arial 10', command=openFiles).grid(row=0, column=1, padx=5, sticky='n')
-    Button(f1, text='Merge', font='Arial 10', command=compute).grid(row=1, columnspan=2, padx=20, sticky='n')
+    f1.option_add('*font', '"Angsana New" 18')
+    lb1 = Label(f1, text='PDF Merger')
+    lb1.grid(row=0, columnspan=3)
+    lb2 = Label(f1, text='Choose Files')
+    lb2.grid(row=1, column=0, padx=5, sticky='e')
+    tb1 = Entry(f1, width=50)
+    tb1.grid(row=1, column=1)
+    bn1 = Button(f1, text='Open Files', command=openFiles)
+    bn1.grid(row=1, column=2, padx=5, sticky='n')
+    bn2 = Button(f1, text='Merge', bg='green', fg='white', width=8, command=compute)
+    bn2.grid(row=2, columnspan=3, padx=20, sticky='n')
     f1.pack(pady=20)    
     
     Label(w1).pack()
@@ -45,35 +57,125 @@ def MenuMergePDF():
     f2.pack()
     
     
+    
 def MenuSplitPDF():
     root.destroy()
     w2 = Tk()
+    w2.geometry('800x500')
+    
+    # Backend 
+    def back2Main():
+        w2.destroy()
+        mainMenu()
+        
+    # Widget
+    f0 = Frame(w2)
+    Button(f0, text='Back to main', font='10', command=back2Main).pack(padx=10, side='left')
+    f0.pack()
+    
+    f1 = Frame(w2)
+    f1.option_add('*font', '"Angsana New" 18')
+    
+    lb1 = Label(f1, text='Select PDF File:')
+    lb1.grid(row=0, column=0)
+    tb1 = Entry(f1, width=50)
+    tb1.grid(row=0, column=1)
+    bn1 = Button(f1, text='Browse PDF', command='')
+    bn1.grid(row=0, column=2)
+    lb2 = Label(f1, text='Total Pages:')
+    lb2.grid(row=1, column=0)
+    tb2 = Entry(f1, width=50)
+    tb2.grid(row=1, column=1)
+    lb3 = Label(f1, text='Select Pages from:')
+    lb3.grid(row=2, column=0)
+    tb3 = Entry(f1, width=50)
+    tb3.grid(row=2, column=1)
+    
+    bn2 = Button(f1, text='Split PDF', bg='green', fg='white', width=8)
+    bn2.grid(row=3, columnspan=3)
+    bn2 = Button(f1, text='Clear', width=8)
+    bn2.grid(row=4, columnspan=3)
+    
+    
+    f1.pack()
+    
     
 
 def MenuImage2PDF():
     root.destroy()
     w3 = Tk()
+    w3.geometry('800x600')
+    
+    # Backend 
+    def back2Main():
+        w3.destroy()
+        mainMenu()
+        
+    # Widget
+    f0 = Frame(w3)
+    Button(f0, text='Back to main', font='10', command=back2Main).pack(padx=10, side='left')
+    f0.pack()
+    
     
 
 def MenuPDF2Image():
     root.destroy()
     w4 = Tk()
+    w4.geometry('800x600')
+    
+    # Backend 
+    def back2Main():
+        w4.destroy()
+        mainMenu()
+        
+    # Widget
+    f0 = Frame(w4)
+    Button(f0, text='Back to main', font='10', command=back2Main).pack(padx=10, side='left')
+    f0.pack()
+    
+
 
 def MenuCompressPDF():
     root.destroy()
     w5 = Tk()
+    w5.geometry('800x600')
+    
+    # Backend 
+    def back2Main():
+        w5.destroy()
+        mainMenu()
+        
+    # Widget
+    f0 = Frame(w5)
+    Button(f0, text='Back to main', font='10', command=back2Main).pack(padx=10, side='left')
+    f0.pack()
+
+
 
 def MenuProtectPDF():
     root.destroy()
     w6 = Tk()
+    w6.geometry('800x600')
+    
+    # Backend 
+    def back2Main():
+        w6.destroy()
+        mainMenu()
+        
+    # Widget
+    f0 = Frame(w6)
+    Button(f0, text='Back to main', font='10', command=back2Main).pack(padx=10, side='left')
+    f0.pack()
 
-menu_func = [MenuMergePDF
+
+
+def mainMenu():
+    menu_func = [MenuMergePDF
              ,MenuSplitPDF
              ,MenuImage2PDF
              ,MenuPDF2Image
              ,MenuCompressPDF
              ,MenuProtectPDF]
-def main():
     global root
     root = Tk()
     root.title('PDF Management (Beta Designed #02)')
@@ -118,4 +220,4 @@ def main():
     
 
 if __name__ == '__main__':
-    main()
+    mainMenu()
