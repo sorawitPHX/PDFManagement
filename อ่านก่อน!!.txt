@@ -1,5 +1,5 @@
 -- วิธีเปิด Project --
 1. เปิด cmd ที่โฟร์เดอร์นี้!! (สำคัญมาก)
 2. จากทั้นพิมคำสั่ง 
-	2.1 env\scpirts\activate
-	2.2 py main.py
+	2.1 env\scrirts\activate
+	2.2 py app.py
