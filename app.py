@@ -3,13 +3,23 @@ from tkinter.filedialog import *
 from tkinter.messagebox import *
 from tkinter.ttk import Combobox
 from PIL import ImageTk
-from mainFunction import pdfFunction
-from PyPDF2 import *
+from PyPDF2 import PdfFileReader
 import os
+import gc # module ตัวนี้สำคัญมาก ไว้สำหรับใช้ clear memory ที่่เป็น cache
+from mainFunction import pdfFunction
 
-def MenuMergePDF():
+def MenuMergePDF(): # Complete
+    # เมื่อกำการคลิก Menu ย่อยจาก MainMenu
+    # จากนั้นจพทำการทำลาย window ของ MainMenu ทิ้ง (root.destoty)
+    # โปรแกรมจะ สั่งให้ MainMenu ออกจาก mainloop (root.quit)
+    # แล้ว MainMenu จะทำการ return เพื่อหยุดการทำงาน function เพื่อป้องกันการเปิด recursive (Run คำสั่งด้านล่าง stagement root.mainloop)
+    global counter 
+    counter = 1 
     root.destroy()
+    root.quit()
+    
     w1 = Tk()
+    w1.title('Merge PDF')
     w1.geometry('1000x550+300+100')
     w1.resizable(False, False)
     
@@ -17,12 +27,13 @@ def MenuMergePDF():
     # backend
     def back2Main():
         w1.destroy()
-        mainMenu()
+        w1.quit()
     
     def openFiles():
-        fs = askopenfiles(mode='r', filetypes=[('PDF File', '*.pdf')])
+        fs = askopenfilenames(filetypes=[('PDF File', '*.pdf')])
+        print(fs)
         for index, f in enumerate(fs):
-            lib1.insert(index, f.name)
+            lib1.insert(index, f)
         
     def delete_ele():
         if lib1.size() > 0:
@@ -35,24 +46,30 @@ def MenuMergePDF():
     def up():
         if lib1.size() > 0:
             select = lib1.curselection()
-            if select[0] != 0:
-                current_data = lib1.get(select)
-                data_above = lib1.get(select[0]-1)
-                lib1.delete(select[0]-1)
-                lib1.insert(select[0]-1, current_data)
-                lib1.delete(select)
-                lib1.insert(select, data_above)
+            try:
+                if select[0] != 0:
+                    current_data = lib1.get(select)
+                    data_above = lib1.get(select[0]-1)
+                    lib1.delete(select[0]-1)
+                    lib1.insert(select[0]-1, current_data)
+                    lib1.delete(select)
+                    lib1.insert(select, data_above)
+            except:
+                showwarning('Index out of range', 'Please select some elements to move')
     
     def down():
         if lib1.size() > 0:
             select = lib1.curselection()
-            if select[0] != lib1.size()-1:
-                current_data = lib1.get(select)
-                data_below = lib1.get(select[0]+1)
-                lib1.delete(select[0]+1)
-                lib1.insert(select[0]+1, current_data)
-                lib1.delete(select)
-                lib1.insert(select, data_below)
+            try:
+                if select[0] != lib1.size()-1:
+                    current_data = lib1.get(select)
+                    data_below = lib1.get(select[0]+1)
+                    lib1.delete(select[0]+1)
+                    lib1.insert(select[0]+1, current_data)
+                    lib1.delete(select)
+                    lib1.insert(select, data_below)
+            except:
+                showwarning('Index out of range', 'Please select some elements to move')
     
     def clear():    
         lib1.delete(0, END)
@@ -65,18 +82,18 @@ def MenuMergePDF():
                 for order in range(lib1.size()):
                     files.append(lib1.get(order))
                 try:
-                    files = [open(i, 'rb') for i in files]
+                    #files = [open(i, 'rb') for i in files]
                     pdfFunction.mergePDF(files, path)
                     if os.path.exists(path):
                         showinfo('Success', 'Export file success!')
                     else:
-                        showerror('Fail', 'Unable to export file')
+                        showwarning('Fail', 'Unable to export file')
                 except:
                     showerror('Fail', 'Something wrong')
                 finally:
-                    [i.close() for i in files]
-                    print([i.closed for i in files])
-
+                    #[i.close() for i in files]
+                    #print([i.closed for i in files])
+                    del files
         else:
             showwarning('Cannot Merge', 'There are no files')
     
@@ -108,41 +125,50 @@ def MenuMergePDF():
     bn5.pack()
     bn6 = Button(f1, text='Export', bg='green', fg='white', width=8, command=compute)
     bn6.grid(row=2, columnspan=3, pady=20, sticky='n')
-    f1.pack(pady=20)    
+    f1.pack(pady=20) 
     
-     
+    w1.mainloop()
+    print('ออกจาก mainloop Menu1')
+    return
     
-def MenuSplitPDF():
+    
+    
+def MenuSplitPDF(): # Complete
+    global counter
+    counter = 1
     root.destroy()
+    root.quit()
+    
     w2 = Tk()
+    w2.title('Split PDF')
     w2.geometry('800x500+200+200')
     w2.resizable(False, False)
-    
     
     # Backend 
     def back2Main():
         w2.destroy()
-        mainMenu()
+        w2.quit()
         
     def chooseFile():
         global f
-        f = askopenfile(mode='rb', filetypes=[('PDF File', '*.pdf')])
+        f = askopenfilename(filetypes=[('PDF File', '*.pdf')])
         if f:
-            global f_name
-            f_name = f.name
             rd = PdfFileReader(f)
             tb1.configure(state=NORMAL)
             tb1.delete(0, END)
-            tb1.insert(0, f.name)
+            tb1.insert(0, f)
             tb1.configure(state=DISABLED)
             tb2.configure(state=NORMAL)
             tb2.delete(0, END)
             tb2.insert(0, rd.numPages)
             tb2.configure(state=DISABLED)
-            
+            del rd
+            gc.collect()
+            #print(gc.get_count())
+                        
     def compute():
         try:
-            if not f_name: raise NameError
+            if tb1.get() == '': raise NameError
         except NameError:
             showwarning('Choose File First', 'Please choose file first')
         else:
@@ -161,6 +187,7 @@ def MenuSplitPDF():
             else:
                 path = asksaveasfilename(filetypes=[('PDF File', '*.pdf')], defaultextension=[('PDF File', '*.pdf')])
                 if path:
+                    f_name = tb1.get()
                     print(path)
                     print('start :', start_page)
                     print('end :', end_page)
@@ -174,8 +201,6 @@ def MenuSplitPDF():
                         showerror('Error', 'Something error')
     
     def clear():
-        global f_name
-        f_name = None
         tb1.configure(state=NORMAL)
         tb1.delete(0, END)
         tb1.configure(state=DISABLED)
@@ -217,26 +242,36 @@ def MenuSplitPDF():
     
     bn2 = Button(f1, text='Export', bg='green', fg='white', width=8, command=compute)
     bn2.grid(row=4, columnspan=3)
-        
     f1.pack()
+
+    w2.mainloop()
+    
+    print('ออกจาก mainloop w2')
+    return
     
     
 
-def MenuImage2PDF():
+def MenuImage2PDF(): # Complete
+    global counter
+    counter = 1
     root.destroy()
+    root.quit()
+    
     w3 = Tk()
+    w3.title('Image to PDF')
     w3.geometry('1000x550+200+200')
     w3.resizable(False, False)
     
     # Backend 
     def back2Main():
         w3.destroy()
-        mainMenu()
+        w3.quit()
 
     def openFiles():
-        fs = askopenfiles(mode='r', filetypes=[('PDF File', '*.png'), ('JPEG Files', ('*.jpg', '*.jpeg'))])
+        fs = askopenfilenames(filetypes=[('PDF File', '*.png'), ('JPEG Files', ('*.jpg', '*.jpeg'))])
         for index, f in enumerate(fs):
-            lib1.insert(index, f.name)
+            lib1.insert(index, f)
+        #print(fs)
         
     def delete_ele():
         if lib1.size() > 0:
@@ -275,21 +310,18 @@ def MenuImage2PDF():
     def compute():
         #print(fs)
         if lib1.size() > 0:
-            path = asksaveasfilename(filetypes=[('PDF File', '*.pdf')], defaultextension=[('PDF File', '*.pdf')])
-            if path:
+            output_path = asksaveasfilename(filetypes=[('PDF File', '*.pdf')], defaultextension=[('PDF File', '*.pdf')])
+            if output_path:
                 files_path = [lib1.get(order) for order in range(lib1.size())]
-                files = [open(f, mode='rb') for f in files_path]
+                #files = [open(f, mode='rb') for f in files_path]
                 try:
-                    pdfFunction.image2pdf(files, path)
-                    if os.path.exists(path):
+                    pdfFunction.image2pdf(files_path, output_path)
+                    if os.path.exists(output_path):
                         showinfo('Success', 'Export file Success!')
                     else:
                         showwarning('Fail', 'Unable to export file')
                 except:
                     showerror('Something error', 'There is something happened')
-                finally:
-                    [i.close() for i in files]
-                    
         else:
             showwarning('File not found', 'Please choose file first')
         
@@ -325,23 +357,33 @@ def MenuImage2PDF():
     bn6.grid(row=2, columnspan=3, pady=20, sticky='n')
     f1.pack(pady=20)
     
+    w3.mainloop()
     
+    print('ออกจาก mainloop w3')
+    return    
+
+
 
 def MenuPDF2Image():
+    global counter
+    counter = 1
     root.destroy()
+    root.quit()
+    
     w4 = Tk()
+    w4.title('PDF to Image')
     w4.geometry('1000x600+200+200')
     w4.resizable(False, False)
     
     # Backend 
     def back2Main():
         w4.destroy()
-        mainMenu()
-    
+        w4.quit()
+            
     def openFiles():
-        fs = askopenfiles(mode='r', filetypes=[('PDF File', '*.pdf')])
+        fs = askopenfilenames(filetypes=[('PDF File', '*.pdf')])
         for index, f in enumerate(fs):
-            lib1.insert(index, f.name)
+            lib1.insert(index, f)
         
     def delete_ele():
         if lib1.size() > 0:
@@ -381,7 +423,6 @@ def MenuPDF2Image():
             path = askdirectory()
             if path:
                 files_path = [lib1.get(order) for order in range(lib1.size())]
-                #files = [open(f, mode='rb') for f in files_path]
                 format = cb.get()
                 format = (format.split('.')[-1]).lower()
                 print(format)
@@ -437,24 +478,34 @@ def MenuPDF2Image():
     bn7 = Button(f1, text='Export', bg='green', fg='white', width=8, command=compute)
     bn7.grid(row=4, columnspan=3, pady=10, sticky='n')
     f1.pack(pady=20)
+    
+    w4.mainloop()
+    
+    print('ออกจาก mainloop w4')
+    return
 
     
 
 def MenuCompressPDF():
+    global counter
+    counter = 1
     root.destroy()
+    root.quit()
+    
     w5 = Tk()
+    w5.title('Compress PDF')
     w5.geometry('1000x600+200+200')
     w5.resizable(False, False)
     
     # Backend 
     def back2Main():
         w5.destroy()
-        mainMenu()
+        w5.quit()
         
     def openFiles():
-        fs = askopenfiles(mode='r', filetypes=[('PDF File', '*.pdf')])
+        fs = askopenfilenames(filetypes=[('PDF File', '*.pdf')])
         for index, f in enumerate(fs):
-            lib1.insert(index, f.name)
+            lib1.insert(index, f)
         
     def delete_ele():
         if lib1.size() > 0:
@@ -494,7 +545,6 @@ def MenuCompressPDF():
             path = askdirectory()
             if path:
                 files_path = [lib1.get(order) for order in range(lib1.size())]
-                #files = [open(f, mode='rb') for f in files_path]
                 compre_lev = cb.get()
                 pdfFunction.compressPDF(files_path, path, compre_lev)
                 showinfo('Success', 'Export file success')
@@ -550,32 +600,39 @@ def MenuCompressPDF():
     bn7 = Button(f1, text='Export', bg='green', fg='white', width=8, command=compute)
     bn7.grid(row=4, columnspan=3, pady=10, sticky='n')
     f1.pack(pady=20)
-    
     f1 = Frame()
+    
+    w5.mainloop()
+    print('ออกจาก mainloop w4')
+    return
 
 
 
 def MenuProtectPDF():
+    global counter
+    counter = 1
     root.destroy()
+    root.quit()
+    
     w6 = Tk()
+    w6.title('Protect PDF')
     w6.geometry('1000x500+200+200')
     w6.resizable(False, False)
     
     # Backend 
     def back2Main():
         w6.destroy()
-        mainMenu()
+        w6.quit()
         
     def chooseFile():
         global f
-        f = askopenfile(mode='rb', filetypes=[('PDF File', '*.pdf')])
+        f = askopenfilename(filetypes=[('PDF File', '*.pdf')])
         if f:
             global f_name
-            f_name = f.name
-            rd = PdfFileReader(f)
+            f_name = f
             tb1.configure(state=NORMAL)
             tb1.delete(0, END)
-            tb1.insert(0, f.name)
+            tb1.insert(0, f)
             tb1.configure(state=DISABLED)
             
     def compute():
@@ -649,12 +706,18 @@ def MenuProtectPDF():
     
     bn2 = Button(f1, text='Export', bg='green', fg='white', width=8, command=compute)
     bn2.grid(row=4, columnspan=3)
-        
     f1.pack()
-
+    w6.mainloop()
+    print('ออกจาก mainloop w5')
+    return
 
 
 def mainMenu():
+    # ในโปรแกรมย่อยจะให้ counter = 1 คือ การ loop MainMenu ไปเรื่อยๆ 
+    # ใน MainMenu จะให้ counter = 0 นั่นคือไม่มีการเปิดในงาน Menuอื่นๆ และโปรแกรมก็จะสามารถออกจาก Loop ได้แล้วจบการทำงานได้อย่างสมบูรณ์ ถ้าไม่มีการคลิกเปิด Menu ย่อยขึ้นมา
+    # ถ้าไม่มีการประกาศตัวแปร counter ขึ้นมา เราจะไม่สามารถปิด MainMenu ได้ เพราะมันจะโดน Loop ไปเรื่อยๆ
+    global root, counter
+    counter = 0
     menu_func = [MenuMergePDF
              ,MenuSplitPDF
              ,MenuImage2PDF
@@ -662,12 +725,18 @@ def mainMenu():
              ,MenuCompressPDF
              ,MenuProtectPDF]
     
-    global root
     root = Tk()
-    root.title('PDF Management (Beta Designed #02)')
+    root.title('PDF Management (pre-release 0.1.0)')
     root.geometry('1280x720+100+10')
     root.resizable(width=False, height=False)
     root.configure(background='#f3f0ec')
+    
+    menu_bar = Menu(root)
+    menu_bar_about = Menu(menu_bar, tearoff=0)
+    menu_bar_about.add_command(label='About us', command='')
+    menu_bar_about.add_command(label='About us', command='')
+    menu_bar_about.add_command(label='About us', command='')
+    menu_bar.add_cascade(label='Help', menu=menu_bar_about)
 
     top_img = ImageTk.PhotoImage(file='image/Top.png')
     Label(root, image=top_img).pack()
@@ -701,9 +770,21 @@ def mainMenu():
     items_top.pack()
     items_below.pack()
     fm_items.pack()
-
-    root.mainloop()
     
+    root.mainloop()
+    print('ออกจาก mainloop MainMenu')
+    return    
+
+
 
 if __name__ == '__main__':
-    mainMenu()
+    while True:
+        mainMenu()
+        if counter == 0:
+            break
+        gc.collect()
+        print(gc.get_count())
+        print('เคลียร์ memmory Return MainMenu')
+    gc.collect()
+    print(gc.get_count())
+    print('จบการทำงานโปรแกรมอย่างสมบูรณ์')

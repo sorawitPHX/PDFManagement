@@ -2,53 +2,93 @@ from PyPDF2 import *
 from pdf2image import convert_from_path
 from PIL import Image
 from PDFNetPython3.PDFNetPython import PDFDoc, SDFDoc, Optimizer, PDFNet
+import gc
 import os
 
 
-def mergePDF(files, path : str):
-    new = PdfMerger()
-    for f in files:
-        try:
-            new.append(f.name)
-        except FileNotFoundError as ferr:
-            print('-- File Not Found! --')
-            print(ferr)
-    new.write(f'{path}')
+
+def progressBar(process, total):
+    percent = 100 * (process/total)
+    bar = f"\r|{'█'*int(percent)}{'-'*int(100-percent)}|{percent:.2f}%"
+    print(bar, end='\r')
+    if process == total:
+        print(bar)
+
+
+
+def mergePDF(files_path, output_path : str):
+    pdf = PdfMerger()
+    for index, f_path in enumerate(files_path):
+        with open(f_path, 'rb') as f:
+            pdf.append(f)
+        progressBar(index+1, len(files_path))
+    pdf.write(f'{output_path}')
+    pdf.close()
+    del pdf, files_path, f_path, f
+    gc.collect()
     print('-- Merged file complete --')
-    new.close()
-    
 
 
-def splitPDF(file, path, start, end):
-    rd = PdfFileReader(file)
+
+def splitPDF(file_path, output_path, start, end):
+    rd = PdfFileReader(file_path)
     wd = PdfFileWriter()
     for i in range(start, end+1):
         current_page = rd.getPage(i)
         wd.add_page(current_page)
-    wd.write(path)
+    wd.write(output_path)
+    del rd, wd
+    gc.collect()
+    print( gc.get_count() )
+    print('-- Splited file complete --')
 
 
 
-def image2pdf(files, path=''):
-    temp_dir_path = path.split('/')
-    dir_path = '/'.join(temp_dir_path[0:-1])
-    os.mkdir(f'{dir_path}/__PDFMANAGEMENT_PROJECT_TEMP__')
-    for index, f in enumerate(files):
-        image = Image.open(f)
-        conv_image = image.convert(mode='RGB')
-        conv_image.save(f'{dir_path}/__PDFMANAGEMENT_PROJECT_TEMP__/{index+1}.pdf', 'pdf')
-        image.close()
-        conv_image.close()
-    temp = os.listdir(f'{dir_path}/__PDFMANAGEMENT_PROJECT_TEMP__')
-    new_files = [open(f'{dir_path}/__PDFMANAGEMENT_PROJECT_TEMP__/{i}', mode='rb') for i in temp]
-    mergePDF(new_files, path)
-    for i in new_files:
-        i.close()
+def image2pdf(files_path, output_path='./'):
+    def deleteCache(path):
+        files = os.listdir(path)
+        for file in files:
+            os.remove(f'{path}/{file}')
+        os.removedirs(path)
+    
+    dir_path = output_path.split('/')
+    dir_path = '/'.join(dir_path[0:-1])
+    cache_path = f"{dir_path}/__PDFMANAGEMENT_PROJECT_TEMP__"
+    
+    if os.path.exists(cache_path):
+        deleteCache(cache_path)
         
-    for i in temp:
-        os.remove(f'{dir_path}/__PDFMANAGEMENT_PROJECT_TEMP__/{i}')
-    os.removedirs(f'{dir_path}/__PDFMANAGEMENT_PROJECT_TEMP__/')
-    print('-- Success --')
+    os.mkdir(f'{dir_path}/__PDFMANAGEMENT_PROJECT_TEMP__')
+    try:
+        for index, f in enumerate(files_path):
+            image = Image.open(f)
+            conv_image = image.convert(mode='RGB')
+            conv_image.save(f'{cache_path}/{index+1}.pdf', 'pdf')
+            image.close()
+            conv_image.close()
+    except:
+        del image, conv_image
+        deleteCache(cache_path)
+        gc.collect()
+        print( gc.get_count() )
+        print('-- Something error on convert img to pdf --')
+        raise Exception
+    files_name = os.listdir(f'{cache_path}')
+    files_path2 = [f"{cache_path}/{f_name}" for f_name in files_name]
+    try:
+        mergePDF(files_path2, output_path)
+    except:
+        del image, conv_image
+        deleteCache(cache_path)
+        gc.collect()
+        print( gc.get_count() )
+        print('-- Something error on merge pdf --')
+        raise Exception
+    del image, conv_image
+    deleteCache(cache_path)
+    gc.collect()
+    print( gc.get_count() )
+    print('-- Converted image to pdf complete --')
 
 
 
@@ -81,7 +121,6 @@ def compressPDF(files, path, compress_level):
         Optimizer.Optimize(pdf) # ส่วนสำคัญ class และ method ตัวนี้จะทำให้ pdf มีขนาดที่ลดลง "ด้วยการลบ redundant(ความซับซ้อน)"
         pdf.Save(output_path, SDFDoc.e_linearized)
         pdf.Close()
-        
     for f_path in files:
         f_name = f_path.split('/')[-1]
         f_name = f_name.split('.')[0]
@@ -102,4 +141,3 @@ def protectPFD(file, path, password):
 
 if __name__ == '__main__':
     pass
-    #pdf2image([r"C:/Users/MSI Ryzen5\Downloads/TEST10.pdf"], r"C:/Users/MSI Ryzen5/Downloads", 'png')
