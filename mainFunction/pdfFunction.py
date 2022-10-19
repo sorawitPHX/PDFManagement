@@ -92,25 +92,28 @@ def image2pdf(files_path, output_path='./'):
 
 
 
-def pdf2image(files : list, path, format):
-    for index1, file in enumerate(files):
-        file_name = file.split('/')[-1]
-        file_name = file_name.split('.')
-        file_name = file_name[0]
-        if os.path.exists(f'{path}/{file_name}'): # เช็คถ้ามีไฟล์อยู่ให้ทำการหยุดโปรแกรมทันที
-            return False
-    for index1, file in enumerate(files):
-        file_name = file.split('/')[-1]
-        file_name = file_name.split('.')
-        file_name = file_name[0]
-        print(file_name)
-        os.mkdir(f'{path}/{file_name}')
-        pdf = convert_from_path(file)
-        for index2, page in enumerate(pdf):
-            print(page)
-            page.save(f'{path}/{file_name}/Page{index2}.{format}')
-            
-            
+def pdf2image(files_path : list, output_directory_path, format):
+    for index1, file in enumerate(files_path):
+        print(file)
+        didrectory_name = file.split('/')[-1]
+        didrectory_name = didrectory_name.split('.')
+        didrectory_name = didrectory_name[0]
+        assert not(os.path.exists(f'{output_directory_path}/{didrectory_name}')), f'-- There is the same folder --\n-> {didrectory_name}'
+    for index1, file in enumerate(files_path):
+        didrectory_name = file.split('/')[-1]
+        didrectory_name = didrectory_name.split('.')
+        didrectory_name = didrectory_name[0]
+        os.mkdir(f'{output_directory_path}/{didrectory_name}')
+        print(index1)
+        images = convert_from_path(file)
+        print(images)
+        for index2, image in enumerate(images):
+            progressBar(index2+1, len(images))
+            image.save(f'{output_directory_path}/{didrectory_name}/Page{index2}.{format}')
+            del image
+        del images
+    gc.collect()
+    print( gc.get_count() )
 
 def compressPDF(files, path, compress_level):
     # https://www.pdftron.com/api/PDFTronSDK/dotnetcore/pdftron.PDF.PDFDoc.html
@@ -140,4 +143,8 @@ def protectPFD(file, path, password):
 
 
 if __name__ == '__main__':
+    file = [r"C:\Users\MSI Ryzen5\Downloads\Assignment-8.pdf".replace('\\', '/')]
+    output = r'C:/Users/MSI Ryzen5/Downloads/output'
+    format = 'png'
+    pdf2image(file, output, format)
     pass

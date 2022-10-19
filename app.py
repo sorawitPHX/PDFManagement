@@ -5,7 +5,7 @@ from tkinter.ttk import Combobox
 from PIL import ImageTk
 from PyPDF2 import PdfFileReader
 import os
-import gc # module ตัวนี้สำคัญมาก ไว้สำหรับใช้ clear memory ที่่เป็น cache
+import gc # module ตัวนี้สำคัญมาก ไว้สำหรับใช้ clear memory ที่่ไม่ได้ใช้แล้ว แต่ยังค้างอยู่ใน memory
 from mainFunction import pdfFunction
 
 def MenuMergePDF(): # Complete
@@ -20,7 +20,9 @@ def MenuMergePDF(): # Complete
     
     w1 = Tk()
     w1.title('Merge PDF')
-    w1.geometry('1000x550+300+100')
+    width = 1000
+    height = 550
+    w1.geometry(f'{width}x{height}+{w1.winfo_screenwidth()//2-(width//2)}+{w1.winfo_screenheight()//2-(height//2)}')
     w1.resizable(False, False)
     
     
@@ -131,8 +133,6 @@ def MenuMergePDF(): # Complete
     print('ออกจาก mainloop Menu1')
     return
     
-    
-    
 def MenuSplitPDF(): # Complete
     global counter
     counter = 1
@@ -141,7 +141,9 @@ def MenuSplitPDF(): # Complete
     
     w2 = Tk()
     w2.title('Split PDF')
-    w2.geometry('800x500+200+200')
+    width = 800
+    height = 500
+    w2.geometry(f'{width}x{height}+{w2.winfo_screenwidth()//2 - (width//2)}+{w2.winfo_screenheight()//2 - (height//2)}')
     w2.resizable(False, False)
     
     # Backend 
@@ -249,8 +251,6 @@ def MenuSplitPDF(): # Complete
     print('ออกจาก mainloop w2')
     return
     
-    
-
 def MenuImage2PDF(): # Complete
     global counter
     counter = 1
@@ -362,8 +362,6 @@ def MenuImage2PDF(): # Complete
     print('ออกจาก mainloop w3')
     return    
 
-
-
 def MenuPDF2Image():
     global counter
     counter = 1
@@ -372,7 +370,9 @@ def MenuPDF2Image():
     
     w4 = Tk()
     w4.title('PDF to Image')
-    w4.geometry('1000x600+200+200')
+    width = 1000
+    height = 600
+    w4.geometry(f'{width}x{height}+{w4.winfo_screenwidth()//2 - (width//2)}+{w4.winfo_screenheight()//2 - (height//2)}')
     w4.resizable(False, False)
     
     # Backend 
@@ -420,23 +420,20 @@ def MenuPDF2Image():
         
     def compute():
         if lib1.size() > 0:
-            path = askdirectory()
-            if path:
+            directory_path = askdirectory()
+            if directory_path:
                 files_path = [lib1.get(order) for order in range(lib1.size())]
                 format = cb.get()
                 format = (format.split('.')[-1]).lower()
                 print(format)
                 try:
-                    output = pdfFunction.pdf2image(files_path, path, format)
-                    if output == False:
-                        showwarning('Fail', 'Unable to export file because the same files have been exist')
-                        return
-                    if os.path.exists(path):
-                        showinfo('Success', 'Export file success!')
-                    else:
-                        showwarning('Fail', 'Unable to export file')
-                except:
-                    showerror('Error', 'Something error')
+                    pdfFunction.pdf2image(files_path, directory_path, format)
+                    showinfo('Success', 'Export file success!')
+                except AssertionError:
+                    showwarning('Unable to export', 'Unable to export file because the same files have been exist')
+                #except:
+                #    showwarning('Fail', 'Unable to export file')
+                    
         else:
             showwarning('File not found', 'Please input file first')
         
@@ -483,8 +480,6 @@ def MenuPDF2Image():
     
     print('ออกจาก mainloop w4')
     return
-
-    
 
 def MenuCompressPDF():
     global counter
@@ -606,8 +601,6 @@ def MenuCompressPDF():
     print('ออกจาก mainloop w4')
     return
 
-
-
 def MenuProtectPDF():
     global counter
     counter = 1
@@ -711,7 +704,6 @@ def MenuProtectPDF():
     print('ออกจาก mainloop w5')
     return
 
-
 def mainMenu():
     # ในโปรแกรมย่อยจะให้ counter = 1 คือ การ loop MainMenu ไปเรื่อยๆ 
     # ใน MainMenu จะให้ counter = 0 นั่นคือไม่มีการเปิดในงาน Menuอื่นๆ และโปรแกรมก็จะสามารถออกจาก Loop ได้แล้วจบการทำงานได้อย่างสมบูรณ์ ถ้าไม่มีการคลิกเปิด Menu ย่อยขึ้นมา
@@ -727,7 +719,9 @@ def mainMenu():
     
     root = Tk()
     root.title('PDF Management (pre-release 0.1.0)')
-    root.geometry('1280x720+100+10')
+    width = 1280
+    height = 720
+    root.geometry(f'{width}x{height}+{root.winfo_screenwidth()//2-(width//2)}+{root.winfo_screenheight()//2-(height//2)}')
     root.resizable(width=False, height=False)
     root.configure(background='#f3f0ec')
     
@@ -773,7 +767,6 @@ def mainMenu():
     
     root.mainloop()
     print('ออกจาก mainloop MainMenu')
-    return    
 
 
 
