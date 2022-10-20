@@ -2,6 +2,7 @@ from PyPDF2 import *
 from pdf2image import convert_from_path
 from PIL import Image
 from PDFNetPython3.PDFNetPython import PDFDoc, SDFDoc, Optimizer, PDFNet
+from fitz import *
 import gc
 import os
 
@@ -92,7 +93,7 @@ def image2pdf(files_path, output_path='./'):
 
 
 
-def pdf2image(files_path : list, output_directory_path, format):
+def pdf2image(files_path : list, output_directory_path, format): # Not Complete
     for index1, file in enumerate(files_path):
         print(file)
         didrectory_name = file.split('/')[-1]
@@ -115,7 +116,12 @@ def pdf2image(files_path : list, output_directory_path, format):
     gc.collect()
     print( gc.get_count() )
 
-def compressPDF(files, path, compress_level):
+
+def pdf2image2():
+    pass
+
+
+def compressPDF(files_path, output_directory_path, compress_level):
     # https://www.pdftron.com/api/PDFTronSDK/dotnetcore/pdftron.PDF.PDFDoc.html
     # เอกสารข้อมูลเพิ่มเติม
     def compress_pdf(initial_path, output_path): # ใช้ API จาก PDFTRON เข้ามาช่วย
@@ -124,21 +130,25 @@ def compressPDF(files, path, compress_level):
         Optimizer.Optimize(pdf) # ส่วนสำคัญ class และ method ตัวนี้จะทำให้ pdf มีขนาดที่ลดลง "ด้วยการลบ redundant(ความซับซ้อน)"
         pdf.Save(output_path, SDFDoc.e_linearized)
         pdf.Close()
-    for f_path in files:
+        del pdf
+        gc.collect()
+    for f_path in files_path:
         f_name = f_path.split('/')[-1]
         f_name = f_name.split('.')[0]
-        compress_pdf(f_path, f'{path}/{f_name}_compressed.pdf')
+        output_path = f'{output_directory_path}/{f_name}_compressed.pdf'
+        compress_pdf(f_path, output_path)
+    print( gc.get_count() )
         
         
         
-def protectPFD(file, path, password):
-    rd = PdfFileReader(file)
+def protectPFD(file_path, output_path, password):
+    rd = PdfFileReader(file_path)
     wd = PdfFileWriter()
     for index in range(rd.numPages):
         page = rd.getPage(index)
         wd.add_page(page)
     wd.encrypt(password)
-    wd.write(path)
+    wd.write(output_path)
 
 
 

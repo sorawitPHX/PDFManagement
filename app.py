@@ -259,7 +259,9 @@ def MenuImage2PDF(): # Complete
     
     w3 = Tk()
     w3.title('Image to PDF')
-    w3.geometry('1000x550+200+200')
+    width = 1000
+    height = 550
+    w3.geometry(f'{width}x{height}+{w3.winfo_screenwidth()//2 - (width//2)}+{w3.winfo_screenheight()//2 - (height//2)}')
     w3.resizable(False, False)
     
     # Backend 
@@ -489,7 +491,9 @@ def MenuCompressPDF():
     
     w5 = Tk()
     w5.title('Compress PDF')
-    w5.geometry('1000x600+200+200')
+    width = 1000
+    height = 600
+    w5.geometry(f'{width}x{height}+{w5.winfo_screenwidth()//2 - (width//2)}+{w5.winfo_screenheight()//2 - (height//2)}')
     w5.resizable(False, False)
     
     # Backend 
@@ -609,7 +613,9 @@ def MenuProtectPDF():
     
     w6 = Tk()
     w6.title('Protect PDF')
-    w6.geometry('1000x500+200+200')
+    width = 1000
+    height = 500
+    w6.geometry(f'{width}x{height}+{w6.winfo_screenwidth()//2 - (width//2)}+{w6.winfo_screenheight()//2 - (height//2)}')
     w6.resizable(False, False)
     
     # Backend 
