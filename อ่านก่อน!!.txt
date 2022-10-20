@@ -1,5 +1,10 @@
 -- วิธีเปิด Project --
 1. เปิด cmd ที่โฟร์เดอร์นี้!! (สำคัญมาก)
+	path ของ cmd ต้องตรงกับโฟร์เดอร์โปรเจคเท่านั้น
 2. จากทั้นพิมคำสั่ง 
-	2.1 env\scripts\activate
+	2.1 env\scripts\activate (เพื่อใช้งาน Vitual Environment)
 	2.2 py app.py
+
+
+หากรันไม่ได้
+ให้ลองเปลี่ยนคำสั่งที่ 2.2 เป็น python app.py
