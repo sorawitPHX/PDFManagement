@@ -1,14 +1,14 @@
 # Project นี้ถูกพัฒนาโดย 
+# กลุ่ม NonSenior Dev
 # นักศึกษาชั้นปีที่ 1 (ปี 2565)
 # สาขาเทคโนโลยีสารสนเทศ (โครงการพิเศษ) 
 # วิทยาลัยการคอมพิวเตอร์ 
-# มหาวิทยาลัยขอนแก่น (KhonKaen University)
-# กลุ่ม NonSenior Dev
+# มหาวิทยาลัยขอนแก่น (Khon Kaen University)
 from tkinter import *
 from tkinter.filedialog import *
 from tkinter.messagebox import *
 from tkinter.ttk import Combobox
-from PIL import ImageTk
+from PIL import ImageTk, Image
 from PyPDF2 import PdfFileReader
 import os
 import gc # module ตัวนี้สำคัญมาก ไว้สำหรับใช้ clear memory ที่่ไม่ได้ใช้แล้ว แต่ยังค้างอยู่ใน memory
@@ -95,13 +95,12 @@ def MenuMergePDF(): # Complete
                 try:
                     pdfFunction.mergePDF(files, path)
                 except:
-                    showerror('Fail', 'Something wrong')
+                    showerror('Error', 'There is something error')
                 else:
                     if os.path.exists(path):
                         showinfo('Success', 'Export file success!')
                     else:
-                        showwarning('Fail', 'Unable to export file')
-                    
+                        showwarning('Unable to export file', 'Unable to export file')
         else:
             showwarning('Cannot Merge', 'There are no files')
     
@@ -109,6 +108,8 @@ def MenuMergePDF(): # Complete
     # widget
     f0 = Frame(w1)
     Button(f0, text='Back to main', font='10', command=back2Main).pack(padx=10, side='left')
+    logo_img = Image.open('./image/Icon.ico')
+    Label(f0, )
     f0.pack()
     
     f1 = Frame(w1, bd=10, cursor='arrow')
@@ -568,18 +569,12 @@ def MenuCompressPDF():
             if path:
                 files_path = [lib1.get(order) for order in range(lib1.size())]
                 compre_lev = cb.get()
-                pdfFunction.compressPDF(files_path, path, compre_lev)
-                showinfo('Success', 'Export file success')
-                '''
                 try:
                     pdfFunction.compressPDF(files_path, path, compre_lev)
-                    if os.path.exists(path):
-                        showinfo('Success', 'Export file success')
-                    else:
-                        showwarning('Fail', 'Unable to export file')
                 except:
-                    showerror('Error', 'Something error')
-                '''
+                    showerror('Error', 'There is something error')
+                else:
+                    showinfo('Success', 'Export file success')
         else:
             showwarning('File not found', 'Please input file first')
         
@@ -752,9 +747,9 @@ def mainMenu():
              ,MenuPDF2Image
              ,MenuCompressPDF
              ,MenuProtectPDF]
-    
     root = Tk()
-    root.title('PDF Management (pre-release 0.1.0)')
+    root.title('PDF Management (Release 1.0.0)')
+    root.iconbitmap('./image/Icon.ico')
     width = 1280
     height = 720
     root.geometry(f'{width}x{height}+{root.winfo_screenwidth()//2-(width//2)}+{root.winfo_screenheight()//2-(height//2)}')
@@ -814,6 +809,4 @@ if __name__ == '__main__':
         gc.collect()
         print(gc.get_count())
         print('เคลียร์ memmory Return MainMenu')
-    gc.collect()
-    print(gc.get_count())
     print('จบการทำงานโปรแกรมอย่างสมบูรณ์')

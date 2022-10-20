@@ -1,16 +1,13 @@
-from tkinter import *
-from tkinter.ttk 
 from PyPDF2 import *
 from pdf2image import convert_from_path
 from PIL import Image
 from PDFNetPython3.PDFNetPython import PDFDoc, SDFDoc, Optimizer, PDFNet
-#from fitz import *
 import gc
 import os
         
         
 
-def progressBar(process, total, label=''):
+def progressBar(process, total, label=''): # Complete
     percent = 100 * (process/total)
     bar = f"\r|{'█'*int(percent)}{'-'*int(100-percent)}|{percent:.2f}%"
     print(bar, end='\r')
@@ -18,7 +15,7 @@ def progressBar(process, total, label=''):
         print(bar)
     
 
-def mergePDF(files_path, output_path : str):
+def mergePDF(files_path, output_path : str): # Complete
     pdf = PdfMerger()
     for index, f_path in enumerate(files_path):
         with open(f_path, 'rb') as f:
@@ -31,8 +28,7 @@ def mergePDF(files_path, output_path : str):
     print('-- Merged file complete --')
 
 
-
-def splitPDF(file_path, output_path, start, end):
+def splitPDF(file_path, output_path, start, end): # Complete
     rd = PdfFileReader(file_path)
     wd = PdfFileWriter()
     for i in range(start, end+1):
@@ -45,8 +41,8 @@ def splitPDF(file_path, output_path, start, end):
     print('-- Splited file complete --')
 
 
-
-def image2pdf(files_path, output_path, mode):
+def image2pdf(files_path, output_path, mode): # Complete
+    # Function แปลง Image เป็น PDF (ตามขนาดหน้ากระดาษที่กำหนด)
     def page_size_converter(img : Image, output_path, page_size=(int(), int())):
         size = (int(page_size[0]//2.778), int(page_size[1]//2.778))
         print(size)
@@ -81,6 +77,7 @@ def image2pdf(files_path, output_path, mode):
         print( gc.get_count())
         print('-- Converted complete --')
     
+    # Function ลบไฟล์ชั่วคราว
     def deleteCache(path):
         files = os.listdir(path)
         for file in files:
@@ -100,6 +97,7 @@ def image2pdf(files_path, output_path, mode):
         deleteCache(cache_path)
     
     #1 Convert Image to PDF
+    # สร้าง folder เพื่อมาเก็บไฟล์ชั่วคราวเพื่อแปลง Image to PDF ทีละไฟล์ 
     os.mkdir(f'{dir_path}/__PDFMANAGEMENT_PROJECT_TEMP__')
     try:
         if page_size == None:
@@ -127,6 +125,7 @@ def image2pdf(files_path, output_path, mode):
         raise Exception
     
     #2 Merge File
+    # หลังจากแปลงไฟล์ทุกไฟล์เป็น PDF เรียบร้อยแล้ว จะทำการรวมไฟล์(Merge File) อยู่ใน Folder เก็บไฟล์ชั่วคราว
     files_name = os.listdir(f'{cache_path}')
     files_path2 = [f"{cache_path}/{f_name}" for f_name in files_name]
     try:
@@ -145,8 +144,8 @@ def image2pdf(files_path, output_path, mode):
     print('-- Converted image to pdf complete --')
 
 
-
-def pdf2image(files_path : list, output_directory_path, format): # Not Complete
+def pdf2image(files_path : list, output_directory_path, format): # Complete
+    poppler = r'.\poppler\Library\bin'
     for index1, file in enumerate(files_path):
         print(file)
         didrectory_name = file.split('/')[-1]
@@ -158,8 +157,8 @@ def pdf2image(files_path : list, output_directory_path, format): # Not Complete
         didrectory_name = didrectory_name.split('.')
         didrectory_name = didrectory_name[0]
         os.mkdir(f'{output_directory_path}/{didrectory_name}')
+        images = convert_from_path(file, poppler_path=poppler, dpi=92)
         print(index1)
-        images = convert_from_path(file)
         print(images)
         for index2, image in enumerate(images):
             progressBar(index2+1, len(images))
@@ -170,8 +169,7 @@ def pdf2image(files_path : list, output_directory_path, format): # Not Complete
     print( gc.get_count() )
 
 
-
-def compressPDF(files_path, output_directory_path, compress_level):
+def compressPDF(files_path, output_directory_path, compress_level): # Complete (ไว้รออัพเดทหน้านะะครับ)
     # https://www.pdftron.com/api/PDFTronSDK/dotnetcore/pdftron.PDF.PDFDoc.html
     # เอกสารข้อมูลเพิ่มเติม
     def compress_pdf(initial_path, output_path): # ใช้ API จาก PDFTRON เข้ามาช่วย
@@ -190,8 +188,7 @@ def compressPDF(files_path, output_directory_path, compress_level):
     print( gc.get_count() )
         
         
-        
-def protectPFD(file_path, output_path, password):
+def protectPFD(file_path, output_path, password): # Complete
     rd = PdfFileReader(file_path)
     wd = PdfFileWriter()
     for index in range(rd.numPages):
@@ -201,9 +198,8 @@ def protectPFD(file_path, output_path, password):
     wd.write(output_path)
 
 
-
 if __name__ == '__main__':
-    
+    print(' pdfFunction ถูก import เข้ามา')
     #file = [r"C:\Users\MSI Ryzen5\Downloads\Assignment-8.pdf".replace('\\', '/')]
     #output = r'C:/Users/MSI Ryzen5/Downloads/output'
     #format = 'png'
