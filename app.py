@@ -456,8 +456,8 @@ def MenuPDF2Image():
                     showinfo('Success', 'Export file success!')
                 except AssertionError:
                     showwarning('Unable to export', 'Unable to export file because the same files have been exist')
-                #except:
-                #    showwarning('Fail', 'Unable to export file')
+                except:
+                    showerror('Error', 'There is something error')
         else:
             showwarning('File not found', 'Please input file first')
         
