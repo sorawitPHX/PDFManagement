@@ -1,3 +1,9 @@
+# Project นี้ถูกพัฒนาโดย 
+# นักศึกษาชั้นปีที่ 1 (ปี 2565)
+# สาขาเทคโนโลยีสารสนเทศ (โครงการพิเศษ) 
+# วิทยาลัยการคอมพิวเตอร์ 
+# มหาวิทยาลัยขอนแก่น (KhonKaen University)
+# กลุ่ม NonSenior Dev
 from tkinter import *
 from tkinter.filedialog import *
 from tkinter.messagebox import *
@@ -7,6 +13,8 @@ from PyPDF2 import PdfFileReader
 import os
 import gc # module ตัวนี้สำคัญมาก ไว้สำหรับใช้ clear memory ที่่ไม่ได้ใช้แล้ว แต่ยังค้างอยู่ใน memory
 from mainFunction import pdfFunction
+
+
 
 def MenuMergePDF(): # Complete
     # เมื่อกำการคลิก Menu ย่อยจาก MainMenu
@@ -22,6 +30,7 @@ def MenuMergePDF(): # Complete
     w1.title('Merge PDF')
     width = 1000
     height = 550
+    # บรรทัดนี้คือการจัดให้ Window ที่ Popup ขึ้นมาจัดอยู่ตรงกลางจอ
     w1.geometry(f'{width}x{height}+{w1.winfo_screenwidth()//2-(width//2)}+{w1.winfo_screenheight()//2-(height//2)}')
     w1.resizable(False, False)
     
@@ -84,18 +93,15 @@ def MenuMergePDF(): # Complete
                 for order in range(lib1.size()):
                     files.append(lib1.get(order))
                 try:
-                    #files = [open(i, 'rb') for i in files]
                     pdfFunction.mergePDF(files, path)
+                except:
+                    showerror('Fail', 'Something wrong')
+                else:
                     if os.path.exists(path):
                         showinfo('Success', 'Export file success!')
                     else:
                         showwarning('Fail', 'Unable to export file')
-                except:
-                    showerror('Fail', 'Something wrong')
-                finally:
-                    #[i.close() for i in files]
-                    #print([i.closed for i in files])
-                    del files
+                    
         else:
             showwarning('Cannot Merge', 'There are no files')
     
@@ -108,23 +114,25 @@ def MenuMergePDF(): # Complete
     f1 = Frame(w1, bd=10, cursor='arrow')
     f1.option_add('*font', '"Angsana New" 18')
     lb1 = Label(f1, text='- PDF Merger -', font='Impact 20')
-    lb2 = Label(f1, text='Choose Files')
-    lib1 = Listbox(f1, width=80, height=8)
-    bn1 = Button(f1, text='Open Files', width=10, command=openFiles)
     lb1.grid(row=0, columnspan=3)
+    lb2 = Label(f1, text='Choose Files')
     lb2.grid(row=1, column=0, padx=5, sticky='e')
+    lib1 = Listbox(f1, width=80, height=8)
     lib1.grid(row=1, column=1)
+    bn1 = Button(f1, text='Open Files', width=10, command=openFiles)
     bn1.grid(row=1, column=2, padx=5)
+    
     f2 = Frame(f1)
-    f2.grid(row=1, column=0)
     bn2 = Button(f2, text='Delete', width=8, command=delete_ele)
-    bn3 = Button(f2, text='Up', width=8, command=up)
-    bn4 = Button(f2, text='Down', width=8, command=down)
-    bn5 = Button(f2, text='Clear', width=8, command=clear)
     bn2.pack()
+    bn3 = Button(f2, text='Up', width=8, command=up)
     bn3.pack()
+    bn4 = Button(f2, text='Down', width=8, command=down)
     bn4.pack()
+    bn5 = Button(f2, text='Clear', width=8, command=clear)
     bn5.pack()
+    f2.grid(row=1, column=0)
+    
     bn6 = Button(f1, text='Export', bg='green', fg='white', width=8, command=compute)
     bn6.grid(row=2, columnspan=3, pady=20, sticky='n')
     f1.pack(pady=20) 
@@ -132,6 +140,8 @@ def MenuMergePDF(): # Complete
     w1.mainloop()
     print('ออกจาก mainloop Menu1')
     return
+    
+    
     
 def MenuSplitPDF(): # Complete
     global counter
@@ -217,11 +227,11 @@ def MenuSplitPDF(): # Complete
     Button(f0, text='Back to main', font='10', command=back2Main).pack(padx=10, side='top')
     Label(f0, height=3).pack()
     f0.pack()
+    lb0 = Label(w2, text='- Split PDF -', font='Impact 20')
+    lb0.pack()
     
     f1 = Frame(w2)
     f1.option_add('*font', '"Angsana New" 18')
-    lb0 = Label(w2, text='- Split PDF -', font='Impact 20')
-    lb0.pack()
     lb1 = Label(f1, text='Select PDF File:')
     lb1.grid(row=0, column=0)
     tb1 = Entry(f1, width=60, state=DISABLED)
@@ -233,6 +243,7 @@ def MenuSplitPDF(): # Complete
     bn3 = Button(f2, text='Clear', width=8, command=clear)
     bn3.pack(padx=10, pady=20)
     f2.grid(row=3, columnspan=2)
+    
     lb2 = Label(f1, text='Total Pages:')
     lb2.grid(row=1, column=0)
     tb2 = Entry(f1, width=60, state=DISABLED)
@@ -251,6 +262,8 @@ def MenuSplitPDF(): # Complete
     print('ออกจาก mainloop w2')
     return
     
+    
+    
 def MenuImage2PDF(): # Complete
     global counter
     counter = 1
@@ -260,7 +273,7 @@ def MenuImage2PDF(): # Complete
     w3 = Tk()
     w3.title('Image to PDF')
     width = 1000
-    height = 550
+    height = 600
     w3.geometry(f'{width}x{height}+{w3.winfo_screenwidth()//2 - (width//2)}+{w3.winfo_screenheight()//2 - (height//2)}')
     w3.resizable(False, False)
     
@@ -307,7 +320,6 @@ def MenuImage2PDF(): # Complete
     
     def clear():
         lib1.delete(0, END)
-
         
     def compute():
         #print(fs)
@@ -315,19 +327,17 @@ def MenuImage2PDF(): # Complete
             output_path = asksaveasfilename(filetypes=[('PDF File', '*.pdf')], defaultextension=[('PDF File', '*.pdf')])
             if output_path:
                 files_path = [lib1.get(order) for order in range(lib1.size())]
-                #files = [open(f, mode='rb') for f in files_path]
+                page_size_mode = cb1.get()
+                page_size_mode = page_size_mode.split(' ')[0]
                 try:
-                    pdfFunction.image2pdf(files_path, output_path)
-                    if os.path.exists(output_path):
-                        showinfo('Success', 'Export file Success!')
-                    else:
-                        showwarning('Fail', 'Unable to export file')
+                    pdfFunction.image2pdf(files_path, output_path, page_size_mode)
                 except:
-                    showerror('Something error', 'There is something happened')
+                    showerror('Unable to export file', 'There is something error')
+                else:
+                    showinfo('Success', 'Export file Success!')
         else:
             showwarning('File not found', 'Please choose file first')
         
-
 
     # Widget
     f0 = Frame(w3)
@@ -338,31 +348,43 @@ def MenuImage2PDF(): # Complete
     f1 = Frame(w3, bd=10, cursor='arrow')
     f1.option_add('*font', '"Angsana New" 18')
     lb1 = Label(f1, text='- Image to PDF Converter -', font='Impact 20')
-    lb2 = Label(f1, text='Choose Files')
-    lib1 = Listbox(f1, width=80, height=8)
-    bn1 = Button(f1, text='Open Files', width=8, command=openFiles)
     lb1.grid(row=0, columnspan=3)
+    lb2 = Label(f1, text='Choose Files')
     lb2.grid(row=1, column=0, padx=5, sticky='e')
+    lib1 = Listbox(f1, width=80, height=8)
     lib1.grid(row=1, column=1)
+    bn1 = Button(f1, text='Open Files', width=8, command=openFiles)
     bn1.grid(row=1, column=2, padx=5)
+    
     f2 = Frame(f1)
-    f2.grid(row=1, column=0)
     bn2 = Button(f2, text='Delete', width=8, command=delete_ele)
-    bn3 = Button(f2, text='Up', width=8, command=up)
-    bn4 = Button(f2, text='Down', width=8, command=down)
-    bn5 = Button(f2, text='Clear', width=8, command=clear)
     bn2.pack()
+    bn3 = Button(f2, text='Up', width=8, command=up)
     bn3.pack()
+    bn4 = Button(f2, text='Down', width=8, command=down)
     bn4.pack()
+    bn5 = Button(f2, text='Clear', width=8, command=clear)
     bn5.pack()
+    f2.grid(row=1, column=0)
+    
+    f3 = Frame(f1)
+    Label(f3, text='Page size').pack()
+    cb1 = Combobox(f3, justify='center', width=28)
+    cb1['values'] = ['Fit (Same page size as image)', 'A4 (297x210 mm)', 'Letter (215x279.4 mm)']
+    cb1.current(1)
+    cb1['state'] = 'readonly'
+    cb1.pack()
+    f3.grid(row=2, columnspan=3, pady=10)
+    
     bn6 = Button(f1, text='Export', bg='green', fg='white', width=8, command=compute)
-    bn6.grid(row=2, columnspan=3, pady=20, sticky='n')
+    bn6.grid(row=3, columnspan=3, pady=10, sticky='n')
     f1.pack(pady=20)
     
     w3.mainloop()
-    
     print('ออกจาก mainloop w3')
-    return    
+    return
+
+
 
 def MenuPDF2Image():
     global counter
@@ -435,7 +457,6 @@ def MenuPDF2Image():
                     showwarning('Unable to export', 'Unable to export file because the same files have been exist')
                 #except:
                 #    showwarning('Fail', 'Unable to export file')
-                    
         else:
             showwarning('File not found', 'Please input file first')
         
@@ -449,13 +470,14 @@ def MenuPDF2Image():
     f1 = Frame(w4, bd=10, cursor='arrow')
     f1.option_add('*font', '"Angsana New" 18')
     lb1 = Label(f1, text='- PDF to Image Converter -', font='Impact 20')
-    lb2 = Label(f1, text='Choose Files')
-    lib1 = Listbox(f1, width=80, height=8)
-    bn1 = Button(f1, text='Open Files', width=8, command=openFiles)
     lb1.grid(row=0, columnspan=3)
+    lb2 = Label(f1, text='Choose Files')
     lb2.grid(row=1, column=0, padx=5, sticky='e')
+    lib1 = Listbox(f1, width=80, height=8)
     lib1.grid(row=1, column=1)
+    bn1 = Button(f1, text='Open Files', width=8, command=openFiles)
     bn1.grid(row=1, column=2, padx=5)
+    
     f2 = Frame(f1)
     f2.grid(row=1, column=0)
     bn2 = Button(f2, text='Delete', width=8, command=delete_ele)
@@ -467,21 +489,22 @@ def MenuPDF2Image():
     bn4.pack()
     bn5.pack()
     
-    cb = Combobox(f1)
+    cb = Combobox(f1, justify='center')
     cb['values'] = ('*.PNG', '*.JPG', '*.JPEG')
     cb['state'] = 'readonly'
     cb.current(0)
+    cb.grid(row=3, columnspan=3)
     lb3 = Label(f1, text='Choose Format')
     lb3.grid(row=2, columnspan=3)
-    cb.grid(row=3, columnspan=3)
     bn7 = Button(f1, text='Export', bg='green', fg='white', width=8, command=compute)
     bn7.grid(row=4, columnspan=3, pady=10, sticky='n')
     f1.pack(pady=20)
     
     w4.mainloop()
-    
     print('ออกจาก mainloop w4')
     return
+
+
 
 def MenuCompressPDF():
     global counter
@@ -570,15 +593,15 @@ def MenuCompressPDF():
     f1 = Frame(w5, bd=10, cursor='arrow')
     f1.option_add('*font', '"Angsana New" 18')
     lb1 = Label(f1, text='- Compress PDF -', font='Impact 20')
-    lb2 = Label(f1, text='Choose Files')
-    lib1 = Listbox(f1, width=80, height=8)
-    bn1 = Button(f1, text='Open Files', width=8, command=openFiles)
     lb1.grid(row=0, columnspan=3)
+    lb2 = Label(f1, text='Choose Files')
     lb2.grid(row=1, column=0, padx=5, sticky='e')
+    lib1 = Listbox(f1, width=80, height=8)
     lib1.grid(row=1, column=1)
+    bn1 = Button(f1, text='Open Files', width=8, command=openFiles)
     bn1.grid(row=1, column=2, padx=5)
+    
     f2 = Frame(f1)
-    f2.grid(row=1, column=0)
     bn2 = Button(f2, text='Delete', width=8, command=delete_ele)
     bn3 = Button(f2, text='Up', width=8, command=up)
     bn4 = Button(f2, text='Down', width=8, command=down)
@@ -587,6 +610,7 @@ def MenuCompressPDF():
     bn3.pack()
     bn4.pack()
     bn5.pack()
+    f2.grid(row=1, column=0)
     
     lb3 = Label(f1, text='Choose Compression Level')
     lb3.grid(row=2, columnspan=3)
@@ -604,6 +628,8 @@ def MenuCompressPDF():
     w5.mainloop()
     print('ออกจาก mainloop w4')
     return
+
+
 
 def MenuProtectPDF():
     global counter
@@ -694,6 +720,7 @@ def MenuProtectPDF():
     bn3 = Button(f2, text='Clear', width=8, command=clear)
     bn3.pack(padx=10, pady=20)
     f2.grid(row=3, columnspan=2)
+    
     lb2 = Label(f1, text='Set password:')
     lb2.grid(row=1, column=0)
     tb2 = Entry(f1, width=60, show='*')
@@ -706,9 +733,12 @@ def MenuProtectPDF():
     bn2 = Button(f1, text='Export', bg='green', fg='white', width=8, command=compute)
     bn2.grid(row=4, columnspan=3)
     f1.pack()
+    
     w6.mainloop()
     print('ออกจาก mainloop w5')
     return
+
+
 
 def mainMenu():
     # ในโปรแกรมย่อยจะให้ counter = 1 คือ การ loop MainMenu ไปเรื่อยๆ 

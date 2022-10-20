@@ -1,21 +1,22 @@
+from tkinter import *
+from tkinter.ttk 
 from PyPDF2 import *
 from pdf2image import convert_from_path
 from PIL import Image
 from PDFNetPython3.PDFNetPython import PDFDoc, SDFDoc, Optimizer, PDFNet
-from fitz import *
+#from fitz import *
 import gc
 import os
+        
+        
 
-
-
-def progressBar(process, total):
+def progressBar(process, total, label=''):
     percent = 100 * (process/total)
     bar = f"\r|{'█'*int(percent)}{'-'*int(100-percent)}|{percent:.2f}%"
     print(bar, end='\r')
     if process == total:
         print(bar)
-
-
+    
 
 def mergePDF(files_path, output_path : str):
     pdf = PdfMerger()
@@ -45,47 +46,99 @@ def splitPDF(file_path, output_path, start, end):
 
 
 
-def image2pdf(files_path, output_path='./'):
+def image2pdf(files_path, output_path, mode):
+    def page_size_converter(img : Image, output_path, page_size=(int(), int())):
+        size = (int(page_size[0]//2.778), int(page_size[1]//2.778))
+        print(size)
+        page = Image.new(mode='RGB', size=size, color='white')
+        ori_img_size = img.size
+        if (ori_img_size[0] > size[0]) or (ori_img_size[1] > size[1]):
+            if ori_img_size[0] > size[0]:
+                diff_ratio = (ori_img_size[0]-size[0])*100/ori_img_size[0]
+            else:
+                diff_ratio = (ori_img_size[1]-size[1])*100/ori_img_size[1]
+            conv_img_size = [int(ori_img_size[0]*(1-diff_ratio/100)), int(ori_img_size[1]*(1-diff_ratio/100))]
+            img_new = img.resize((conv_img_size[0],conv_img_size[1]))
+            x_pos = (size[0]//2-(conv_img_size[0]//2))
+            y_pos = (size[1]//2-(conv_img_size[1]//2))
+            Image.Image.paste(page, img_new, (x_pos, y_pos))
+            page.save(output_path)
+            page.close()
+        else:
+            diff_ratio = (size[0] - ori_img_size[0])*100/ori_img_size[0]
+            conv_img_size = [int(ori_img_size[0] + (ori_img_size[0]*diff_ratio/100)), int(ori_img_size[1] + (ori_img_size[1]*diff_ratio/100))]
+            if conv_img_size[1] > size[1]:
+                diff_ratio = (size[1] - ori_img_size[1])*100/ori_img_size[1]
+                conv_img_size = [int(ori_img_size[0] + (ori_img_size[0]*diff_ratio/100)), int(ori_img_size[1] + (ori_img_size[1]*diff_ratio/100))]
+            x_pos = (size[0]//2-(conv_img_size[0]//2))
+            y_pos = (size[1]//2-(conv_img_size[1]//2))
+            img_new = img.resize( (conv_img_size[0], conv_img_size[1]) )
+            Image.Image.paste(page, img_new, (x_pos, y_pos))
+            page.save(output_path)
+            page.close()
+        del page, img, img_new
+        gc.collect()
+        print( gc.get_count())
+        print('-- Converted complete --')
+    
     def deleteCache(path):
         files = os.listdir(path)
         for file in files:
             os.remove(f'{path}/{file}')
         os.removedirs(path)
     
+    page_size = {'Fit': None,
+                 'A4': (2480, 3508),
+                 'Letter': (2550, 3300)}
+    page_size = page_size.get(mode)
+    
+    #0 เช็คถ้ายังมีไฟล์ cache ให้ลบทิ้ง
     dir_path = output_path.split('/')
     dir_path = '/'.join(dir_path[0:-1])
     cache_path = f"{dir_path}/__PDFMANAGEMENT_PROJECT_TEMP__"
-    
     if os.path.exists(cache_path):
         deleteCache(cache_path)
-        
+    
+    #1 Convert Image to PDF
     os.mkdir(f'{dir_path}/__PDFMANAGEMENT_PROJECT_TEMP__')
     try:
-        for index, f in enumerate(files_path):
-            image = Image.open(f)
-            conv_image = image.convert(mode='RGB')
-            conv_image.save(f'{cache_path}/{index+1}.pdf', 'pdf')
-            image.close()
-            conv_image.close()
+        if page_size == None:
+            for index, f in enumerate(files_path):
+                image = Image.open(f)
+                image = image.convert(mode='RGB')
+                size = image.size
+                out = f'{dir_path}/__PDFMANAGEMENT_PROJECT_TEMP__/Page{index+1}.pdf'
+                page_size_converter(image, out, size)
+                image.close()
+        else:
+            size = page_size
+            for index, f in enumerate(files_path):
+                image = Image.open(f)
+                image = image.convert(mode='RGB')
+                out = f'{dir_path}/__PDFMANAGEMENT_PROJECT_TEMP__/Page{index+1}.pdf'
+                page_size_converter(image, out, size)
+                image.close()
     except:
-        del image, conv_image
+        del image
         deleteCache(cache_path)
         gc.collect()
         print( gc.get_count() )
         print('-- Something error on convert img to pdf --')
         raise Exception
+    
+    #2 Merge File
     files_name = os.listdir(f'{cache_path}')
     files_path2 = [f"{cache_path}/{f_name}" for f_name in files_name]
     try:
         mergePDF(files_path2, output_path)
     except:
-        del image, conv_image
+        del image
         deleteCache(cache_path)
         gc.collect()
         print( gc.get_count() )
         print('-- Something error on merge pdf --')
         raise Exception
-    del image, conv_image
+    del image
     deleteCache(cache_path)
     gc.collect()
     print( gc.get_count() )
@@ -116,9 +169,6 @@ def pdf2image(files_path : list, output_directory_path, format): # Not Complete
     gc.collect()
     print( gc.get_count() )
 
-
-def pdf2image2():
-    pass
 
 
 def compressPDF(files_path, output_directory_path, compress_level):
@@ -153,8 +203,12 @@ def protectPFD(file_path, output_path, password):
 
 
 if __name__ == '__main__':
-    file = [r"C:\Users\MSI Ryzen5\Downloads\Assignment-8.pdf".replace('\\', '/')]
-    output = r'C:/Users/MSI Ryzen5/Downloads/output'
-    format = 'png'
-    pdf2image(file, output, format)
+    
+    #file = [r"C:\Users\MSI Ryzen5\Downloads\Assignment-8.pdf".replace('\\', '/')]
+    #output = r'C:/Users/MSI Ryzen5/Downloads/output'
+    #format = 'png'
+    #pdf2image(file, output, format)
+    
+    #out = 'out3.pdf'
+    #page_size_converter(file_path=r"C:\Users\MSI Ryzen5\Pictures\Banner.jpg", output_path=out)
     pass
