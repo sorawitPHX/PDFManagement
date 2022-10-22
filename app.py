@@ -4,25 +4,24 @@
 # สาขาเทคโนโลยีสารสนเทศ (โครงการพิเศษ) 
 # วิทยาลัยการคอมพิวเตอร์ 
 # มหาวิทยาลัยขอนแก่น (Khon Kaen University)
+import MyPdfFunc # Module สร้างขึ้นมาเอง (function หลักที่คำนวณและเซฟไฟล์)
 from tkinter import *
 from tkinter.filedialog import *
 from tkinter.messagebox import *
 from tkinter.ttk import Combobox
-from PIL import ImageTk, Image
-from PyPDF2 import PdfFileReader
+from Lib.PIL import ImageTk, Image
+from Lib.PyPDF2 import PdfFileReader
 import os
 import gc # module ตัวนี้สำคัญมาก ไว้สำหรับใช้ clear memory ที่่ไม่ได้ใช้แล้ว แต่ยังค้างอยู่ใน memory
-from mainFunction import pdfFunction
 
-
+version = 'Release 1.0.5'
 
 def MenuMergePDF(): # Complete
     # เมื่อกำการคลิก Menu ย่อยจาก MainMenu
     # จากนั้นจพทำการทำลาย window ของ MainMenu ทิ้ง (root.destoty)
     # โปรแกรมจะ สั่งให้ MainMenu ออกจาก mainloop (root.quit)
     # แล้ว MainMenu จะทำการ return เพื่อหยุดการทำงาน function เพื่อป้องกันการเปิด recursive (Run คำสั่งด้านล่าง stagement root.mainloop)
-    global counter 
-    counter = 1 
+    global open_menu 
     root.destroy()
     root.quit()
     
@@ -37,6 +36,8 @@ def MenuMergePDF(): # Complete
     
     # backend
     def back2Main():
+        global open_menu
+        open_menu = 1
         w1.destroy()
         w1.quit()
     
@@ -93,7 +94,7 @@ def MenuMergePDF(): # Complete
                 for order in range(lib1.size()):
                     files.append(lib1.get(order))
                 try:
-                    pdfFunction.mergePDF(files, path)
+                    MyPdfFunc.mergePDF(files, path)
                 except:
                     showerror('Error', 'There is something error')
                 else:
@@ -108,8 +109,6 @@ def MenuMergePDF(): # Complete
     # widget
     f0 = Frame(w1)
     Button(f0, text='Back to main', font='10', command=back2Main).pack(padx=10, side='left')
-    logo_img = Image.open('./image/Icon.ico')
-    Label(f0, )
     f0.pack()
     
     f1 = Frame(w1, bd=10, cursor='arrow')
@@ -145,8 +144,7 @@ def MenuMergePDF(): # Complete
     
     
 def MenuSplitPDF(): # Complete
-    global counter
-    counter = 1
+    global open_menu
     root.destroy()
     root.quit()
     
@@ -159,6 +157,8 @@ def MenuSplitPDF(): # Complete
     
     # Backend 
     def back2Main():
+        global open_menu
+        open_menu = 1
         w2.destroy()
         w2.quit()
         
@@ -205,7 +205,7 @@ def MenuSplitPDF(): # Complete
                     print('start :', start_page)
                     print('end :', end_page)
                     try:
-                        pdfFunction.splitPDF(f_name, path, start_page, end_page)
+                        MyPdfFunc.splitPDF(f_name, path, start_page, end_page)
                         if os.path.exists(path):
                             showinfo('Success', 'Export file Success!')
                         else:
@@ -265,9 +265,8 @@ def MenuSplitPDF(): # Complete
     
     
     
-def MenuImage2PDF(): # Complete
-    global counter
-    counter = 1
+def MenuImage2PDF(): 
+    global open_menu
     root.destroy()
     root.quit()
     
@@ -280,6 +279,8 @@ def MenuImage2PDF(): # Complete
     
     # Backend 
     def back2Main():
+        global open_menu
+        open_menu = 1
         w3.destroy()
         w3.quit()
 
@@ -330,12 +331,13 @@ def MenuImage2PDF(): # Complete
                 files_path = [lib1.get(order) for order in range(lib1.size())]
                 page_size_mode = cb1.get()
                 page_size_mode = page_size_mode.split(' ')[0]
-                try:
-                    pdfFunction.image2pdf(files_path, output_path, page_size_mode)
+                MyPdfFunc.image2pdf(files_path, output_path, page_size_mode)
+                '''try:
+                    MyPdfFunc.image2pdf(files_path, output_path, page_size_mode)
                 except:
                     showerror('Unable to export file', 'There is something error')
                 else:
-                    showinfo('Success', 'Export file Success!')
+                    showinfo('Success', 'Export file Success!')'''
         else:
             showwarning('File not found', 'Please choose file first')
         
@@ -387,9 +389,8 @@ def MenuImage2PDF(): # Complete
 
 
 
-def MenuPDF2Image():
-    global counter
-    counter = 1
+def MenuPDF2Image(): 
+    global open_menu
     root.destroy()
     root.quit()
     
@@ -402,6 +403,8 @@ def MenuPDF2Image():
     
     # Backend 
     def back2Main():
+        global open_menu
+        open_menu = 1
         w4.destroy()
         w4.quit()
             
@@ -452,7 +455,7 @@ def MenuPDF2Image():
                 format = (format.split('.')[-1]).lower()
                 print(format)
                 try:
-                    pdfFunction.pdf2image(files_path, directory_path, format)
+                    MyPdfFunc.pdf2image(files_path, directory_path, format)
                     showinfo('Success', 'Export file success!')
                 except AssertionError:
                     showwarning('Unable to export', 'Unable to export file because the same files have been exist')
@@ -507,9 +510,8 @@ def MenuPDF2Image():
 
 
 
-def MenuCompressPDF():
-    global counter
-    counter = 1
+def MenuCompressPDF(): # Complete
+    global open_menu
     root.destroy()
     root.quit()
     
@@ -522,6 +524,8 @@ def MenuCompressPDF():
     
     # Backend 
     def back2Main():
+        global open_menu
+        open_menu = 1
         w5.destroy()
         w5.quit()
         
@@ -570,7 +574,7 @@ def MenuCompressPDF():
                 files_path = [lib1.get(order) for order in range(lib1.size())]
                 compre_lev = cb.get()
                 try:
-                    pdfFunction.compressPDF(files_path, path, compre_lev)
+                    MyPdfFunc.compressPDF(files_path, path, compre_lev)
                 except:
                     showerror('Error', 'There is something error')
                 else:
@@ -626,9 +630,8 @@ def MenuCompressPDF():
 
 
 
-def MenuProtectPDF():
-    global counter
-    counter = 1
+def MenuProtectPDF(): # Complete
+    global open_menu
     root.destroy()
     root.quit()
     
@@ -641,6 +644,8 @@ def MenuProtectPDF():
     
     # Backend 
     def back2Main():
+        global open_menu
+        open_menu = 1
         w6.destroy()
         w6.quit()
         
@@ -667,7 +672,7 @@ def MenuProtectPDF():
                     if path:
                         password = tb2.get()
                         try:
-                            pdfFunction.protectPFD(f, path, password)
+                            MyPdfFunc.protectPFD(f, path, password)
                             if os.path.exists(path):
                                 showinfo('Success', 'Protected Success!')
                                 clear_password()
@@ -735,12 +740,12 @@ def MenuProtectPDF():
 
 
 
-def mainMenu():
+def mainMenu(): # Complete
     # ในโปรแกรมย่อยจะให้ counter = 1 คือ การ loop MainMenu ไปเรื่อยๆ 
     # ใน MainMenu จะให้ counter = 0 นั่นคือไม่มีการเปิดในงาน Menuอื่นๆ และโปรแกรมก็จะสามารถออกจาก Loop ได้แล้วจบการทำงานได้อย่างสมบูรณ์ ถ้าไม่มีการคลิกเปิด Menu ย่อยขึ้นมา
     # ถ้าไม่มีการประกาศตัวแปร counter ขึ้นมา เราจะไม่สามารถปิด MainMenu ได้ เพราะมันจะโดน Loop ไปเรื่อยๆ
-    global root, counter
-    counter = 0
+    global root, open_menu
+    open_menu = 0
     menu_func = [MenuMergePDF
              ,MenuSplitPDF
              ,MenuImage2PDF
@@ -748,41 +753,40 @@ def mainMenu():
              ,MenuCompressPDF
              ,MenuProtectPDF]
     root = Tk()
-    root.title('PDF Management (Release 1.0.0)')
+    root.title(f'PDF Management with Simple GUI ({version})')
     root.iconbitmap('./image/Icon.ico')
     width = 1280
     height = 720
     root.geometry(f'{width}x{height}+{root.winfo_screenwidth()//2-(width//2)}+{root.winfo_screenheight()//2-(height//2)}')
     root.resizable(width=False, height=False)
     root.configure(background='#f3f0ec')
-    
+    '''
     menu_bar = Menu(root)
     menu_bar_about = Menu(menu_bar, tearoff=0)
     menu_bar_about.add_command(label='About us', command='')
     menu_bar_about.add_command(label='About us', command='')
     menu_bar_about.add_command(label='About us', command='')
     menu_bar.add_cascade(label='Help', menu=menu_bar_about)
-
-    top_img = ImageTk.PhotoImage(file='image/Top.png')
+    '''
+    top_img = PhotoImage(file='image/Top.png')
     Label(root, image=top_img).pack()
 
-    main_img = ImageTk.PhotoImage(file='image/FrameMain.png')
+    main_img = PhotoImage(file='image/FrameMain(2).png')
     frame_main = Frame(root, width=1158, height=532, bg='#ffffff')
     main_img_background = Label(frame_main, image=main_img).pack()
-    frame_main.place(x=61, y=170)
 
-    fm_title = Frame(height=40, bg='#ffffff')
-    fm_items = Frame()
-    items_top = Frame(fm_items, bg='#ffffff')
-    items_below = Frame(fm_items, bg='#ffffff')
+    frame_title = Frame(root, height=40, bg='#ffffff')
+    frame_items = Frame(root)
+    items_top = Frame(frame_items, bg='#ffffff')
+    items_below = Frame(frame_items, bg='#ffffff')
 
     #Label(text='Select Menu', font='Kanit 24', bg='#ffffff').pack()
-    btn_img = {1: PhotoImage(file='image/item_top_1.png'),
-            2: PhotoImage(file='image/item_top_2.png'),
-            3: PhotoImage(file='image/item_top_3.png'),
-            4: PhotoImage(file='image/item_top_4.png'),
-            5: PhotoImage(file='image/item_top_5.png'),
-            6: PhotoImage(file='image/item_top_6.png')}
+    btn_img = {1: PhotoImage(file='image/item_top_1(2).png'),
+            2: PhotoImage(file='image/item_top_2(2).png'),
+            3: PhotoImage(file='image/item_top_3(2).png'),
+            4: PhotoImage(file='image/item_top_4(2).png'),
+            5: PhotoImage(file='image/item_top_5(2).png'),
+            6: PhotoImage(file='image/item_top_6(2).png')}
     btn = {1: Button(items_top, bd=0, bg='#ffffff', image=btn_img[1]),
         2: Button(items_top, bd=0, bg='#ffffff', image=btn_img[2]),
         3: Button(items_top, bd=0, bg='#ffffff', image=btn_img[3]),
@@ -794,19 +798,19 @@ def mainMenu():
         btn[i].pack(side='left', padx=50, pady=20)
     items_top.pack()
     items_below.pack()
-    fm_items.pack()
+    frame_items.pack(pady=20)
     
+    frame_main.place(x=61, y=170)
     root.mainloop()
     print('ออกจาก mainloop MainMenu')
 
 
-
+# Main Program
+open_menu = 1
 if __name__ == '__main__':
-    while True:
+    while open_menu == 1:
         mainMenu()
-        if counter == 0:
-            break
         gc.collect()
         print(gc.get_count())
-        print('เคลียร์ memmory Return MainMenu')
-    print('จบการทำงานโปรแกรมอย่างสมบูรณ์')
+        print('เคลียร์ memmory และ Return MainMenu')
+    print('-- จบการทำงานโปรแกรมอย่างสมบูรณ์ --')
