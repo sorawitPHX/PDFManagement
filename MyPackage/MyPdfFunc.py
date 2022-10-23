@@ -183,7 +183,7 @@ def pdf2image(files_path : list, output_directory_path, format): # Complete
         didrectory_name = didrectory_name.split('.')
         didrectory_name = didrectory_name[0]
         os.mkdir(f'{output_directory_path}/{didrectory_name}')
-        images = convert_from_path(file, poppler_path=poppler)
+        images = convert_from_path(file, poppler_path=poppler, dpi=100)
         print(index1)
         print(images)
         for index2, image in enumerate(images):
@@ -220,8 +220,10 @@ def protectPFD(file_path, output_path, password): # Complete
     for index in range(rd.numPages):
         page = rd.getPage(index)
         wd.add_page(page)
+        #progressBar(index+1, len(rd.numPages))
     wd.encrypt(password)
     wd.write(output_path)
+    print('-- Protect success --')
 
 
 print('MyPdfFunc ถูก import เข้ามา')
