@@ -1,3 +1,20 @@
+#เนื่องจากโปรเจคนี้มีการติดตั้ง Libary เพิ่มเติมจาก pip install
+# 
+
+-- วิธีที่ 1.1 เปิด Virtual Environment --
+  โดยเปิด cmd ที่ folder โปรเจค
+  แล้วพิมพ์ env\\scripts\\activate.bat (ใช้ได้กับ Windows เท่านั้น)
+  แล้วพิมพ์ py app.py หรือ python app.py
+  
+(แนะนำ) -- วิธีที่ 1.2 ใช้ Virtual Environment ผ่าน VScode(Visual Studio code) --
+  เปิด folder โปรเจคไปที่ VScode
+  แล้วเลือก Interpreter เป็น "Python 3.10.6 ('env': venv)"
+
+(แนะนำ) -- วิธีที่ 2 ติดตั้ง Libary --
+  โดยเปิด cmd ที่ folder โปรเจค
+  แล้วพิมพ์ pip install -r requirment.txt
+  
+
 -- วิธีเปิด Project --
 1. เปิด cmd ที่โฟร์เดอร์นี้!! (สำคัญมาก)
 	path ของ cmd ต้องตรงกับโฟร์เดอร์โปรเจคเท่านั้น

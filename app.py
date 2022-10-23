@@ -4,17 +4,44 @@
 # สาขาเทคโนโลยีสารสนเทศ (โครงการพิเศษ) 
 # วิทยาลัยการคอมพิวเตอร์ 
 # มหาวิทยาลัยขอนแก่น (Khon Kaen University)
-import MyPdfFunc # Module สร้างขึ้นมาเอง (function หลักที่คำนวณและเซฟไฟล์)
+try:
+    from PyPDF2 import PdfFileReader
+except ModuleNotFoundError as mne:
+    print(f'''
+          {"-"*40}
+          !!-- ไม่สามารถเปิด Project app.py ได้ --!!
+          เนื่องจาก {mne}
+          {"-"*40}
+          
+          {"-"*74}
+          {"!!-- วิธีแก้ไข --!!":^74}
+          -- วิธีที่ 1.1 เปิด Virtual Environment --
+            โดยเปิด cmd ที่ folder โปรเจค
+            แล้วพิมพ์ env\\scripts\\activate.bat (ใช้ได้กับ Windows เท่านั้น)
+            แล้วพิมพ์ py app.py หรือ python app.py
+            
+          -- วิธีที่ 1.2 ใช้ Virtual Environment ผ่าน VScode(Visual Studio code) --
+            เปิด folder โปรเจคไปที่ VScode
+            แล้วเลือก Interpreter เป็น "Python 3.10.6 ('env': venv)"
+          
+          -- วิธีที่ 2 ติดตั้ง Libary --
+            โดยเปิด cmd ที่ folder โปรเจค
+            แล้วพิมพ์ pip install -r requirment.txt
+            
+          ปล. เลือกวิธีใดวิธีหนึ่ง
+          {"-"*74}
+          ''')
+    input('กด Enter เพื่อดำเนินการต่อ . . .')
+    quit()
+from MyPackage import MyPdfFunc # Module สร้างขึ้นมาเอง (function หลักที่คำนวณและเซฟไฟล์)
 from tkinter import *
 from tkinter.filedialog import *
 from tkinter.messagebox import *
 from tkinter.ttk import Combobox
-from Lib.PIL import ImageTk, Image
-from Lib.PyPDF2 import PdfFileReader
 import os
 import gc # module ตัวนี้สำคัญมาก ไว้สำหรับใช้ clear memory ที่่ไม่ได้ใช้แล้ว แต่ยังค้างอยู่ใน memory
 
-version = 'Release 1.0.5'
+version = 'Release 1.0.6'
 
 def MenuMergePDF(): # Complete
     # เมื่อกำการคลิก Menu ย่อยจาก MainMenu
@@ -27,6 +54,7 @@ def MenuMergePDF(): # Complete
     
     w1 = Tk()
     w1.title('Merge PDF')
+    w1.iconbitmap('./image/Icon.ico')
     width = 1000
     height = 550
     # บรรทัดนี้คือการจัดให้ Window ที่ Popup ขึ้นมาจัดอยู่ตรงกลางจอ
@@ -88,17 +116,17 @@ def MenuMergePDF(): # Complete
         
     def compute():
         if lib1.size() != 0:
-            path = asksaveasfilename(filetypes=[('PDF File', '*.pdf')], defaultextension=[('PDF File', '*.pdf')])
-            if path:
-                files = list()
+            output_path = asksaveasfilename(filetypes=[('PDF File', '*.pdf')], defaultextension=[('PDF File', '*.pdf')])
+            if output_path:
+                files_path = list()
                 for order in range(lib1.size()):
-                    files.append(lib1.get(order))
+                    files_path.append(lib1.get(order))
                 try:
-                    MyPdfFunc.mergePDF(files, path)
+                    MyPdfFunc.mergePDF(files_path, output_path)
                 except:
                     showerror('Error', 'There is something error')
                 else:
-                    if os.path.exists(path):
+                    if os.path.exists(output_path):
                         showinfo('Success', 'Export file success!')
                     else:
                         showwarning('Unable to export file', 'Unable to export file')
@@ -150,8 +178,9 @@ def MenuSplitPDF(): # Complete
     
     w2 = Tk()
     w2.title('Split PDF')
+    w2.iconbitmap('./image/Icon.ico')
     width = 800
-    height = 500
+    height = 450
     w2.geometry(f'{width}x{height}+{w2.winfo_screenwidth()//2 - (width//2)}+{w2.winfo_screenheight()//2 - (height//2)}')
     w2.resizable(False, False)
     
@@ -177,7 +206,6 @@ def MenuSplitPDF(): # Complete
             tb2.configure(state=DISABLED)
             del rd
             gc.collect()
-            #print(gc.get_count())
                         
     def compute():
         try:
@@ -272,6 +300,7 @@ def MenuImage2PDF():
     
     w3 = Tk()
     w3.title('Image to PDF')
+    w3.iconbitmap('./image/Icon.ico')
     width = 1000
     height = 600
     w3.geometry(f'{width}x{height}+{w3.winfo_screenwidth()//2 - (width//2)}+{w3.winfo_screenheight()//2 - (height//2)}')
@@ -331,13 +360,13 @@ def MenuImage2PDF():
                 files_path = [lib1.get(order) for order in range(lib1.size())]
                 page_size_mode = cb1.get()
                 page_size_mode = page_size_mode.split(' ')[0]
-                MyPdfFunc.image2pdf(files_path, output_path, page_size_mode)
-                '''try:
+                #MyPdfFunc.image2pdf(files_path, output_path, page_size_mode)
+                try:
                     MyPdfFunc.image2pdf(files_path, output_path, page_size_mode)
                 except:
                     showerror('Unable to export file', 'There is something error')
                 else:
-                    showinfo('Success', 'Export file Success!')'''
+                    showinfo('Success', 'Export file Success!')
         else:
             showwarning('File not found', 'Please choose file first')
         
@@ -396,6 +425,7 @@ def MenuPDF2Image():
     
     w4 = Tk()
     w4.title('PDF to Image')
+    w4.iconbitmap('./image/Icon.ico')
     width = 1000
     height = 600
     w4.geometry(f'{width}x{height}+{w4.winfo_screenwidth()//2 - (width//2)}+{w4.winfo_screenheight()//2 - (height//2)}')
@@ -517,6 +547,7 @@ def MenuCompressPDF(): # Complete
     
     w5 = Tk()
     w5.title('Compress PDF')
+    w5.iconbitmap('./image/Icon.ico')
     width = 1000
     height = 600
     w5.geometry(f'{width}x{height}+{w5.winfo_screenwidth()//2 - (width//2)}+{w5.winfo_screenheight()//2 - (height//2)}')
@@ -637,8 +668,9 @@ def MenuProtectPDF(): # Complete
     
     w6 = Tk()
     w6.title('Protect PDF')
-    width = 1000
-    height = 500
+    w6.iconbitmap('./image/Icon.ico')
+    width = 800
+    height = 450
     w6.geometry(f'{width}x{height}+{w6.winfo_screenwidth()//2 - (width//2)}+{w6.winfo_screenheight()//2 - (height//2)}')
     w6.resizable(False, False)
     
@@ -740,10 +772,13 @@ def MenuProtectPDF(): # Complete
 
 
 
-def mainMenu(): # Complete
-    # ในโปรแกรมย่อยจะให้ counter = 1 คือ การ loop MainMenu ไปเรื่อยๆ 
-    # ใน MainMenu จะให้ counter = 0 นั่นคือไม่มีการเปิดในงาน Menuอื่นๆ และโปรแกรมก็จะสามารถออกจาก Loop ได้แล้วจบการทำงานได้อย่างสมบูรณ์ ถ้าไม่มีการคลิกเปิด Menu ย่อยขึ้นมา
-    # ถ้าไม่มีการประกาศตัวแปร counter ขึ้นมา เราจะไม่สามารถปิด MainMenu ได้ เพราะมันจะโดน Loop ไปเรื่อยๆ
+def MainMenu(): # Complete
+    # ในการเปิดโปรแกรมย่อยขึ้นมา จะมีการ assign open_menu = 1 
+    # นั่นคือเมื่อจบการทำงานของฟังก์ชั่นย่อยและ MainMenu จบการทำงาน จะส่งผลให้มีการเปิด MainMenu ขึ้นมาอีกครั้ง
+    # ใน MainMenu จะ Assign open_menu = 0 
+    # นั่นคือเมื่อไม่มีการเปิดในงานเมนูย่อยอื่นๆ เมื่อฟังก์ชั่นย่อยอื่นๆและฟังก์ชัน MainMenu จบการทำงาน
+    # MainMenu จะไม่ถูกเรียกขึ้นมา และจบการทำงานของโปรแกรมในที่สุด
+    # ถ้าไม่มีการประกาศตัวแปร open_menu ขึ้นมา เมนูจะไม่สามารถแสดงอีกครั้งได้หรือ
     global root, open_menu
     open_menu = 0
     menu_func = [MenuMergePDF
@@ -752,6 +787,7 @@ def mainMenu(): # Complete
              ,MenuPDF2Image
              ,MenuCompressPDF
              ,MenuProtectPDF]
+    # สร้างหน้าต่าง Window ขึ้นมา
     root = Tk()
     root.title(f'PDF Management with Simple GUI ({version})')
     root.iconbitmap('./image/Icon.ico')
@@ -760,14 +796,7 @@ def mainMenu(): # Complete
     root.geometry(f'{width}x{height}+{root.winfo_screenwidth()//2-(width//2)}+{root.winfo_screenheight()//2-(height//2)}')
     root.resizable(width=False, height=False)
     root.configure(background='#f3f0ec')
-    '''
-    menu_bar = Menu(root)
-    menu_bar_about = Menu(menu_bar, tearoff=0)
-    menu_bar_about.add_command(label='About us', command='')
-    menu_bar_about.add_command(label='About us', command='')
-    menu_bar_about.add_command(label='About us', command='')
-    menu_bar.add_cascade(label='Help', menu=menu_bar_about)
-    '''
+
     top_img = PhotoImage(file='image/Top.png')
     Label(root, image=top_img).pack()
 
@@ -775,12 +804,10 @@ def mainMenu(): # Complete
     frame_main = Frame(root, width=1158, height=532, bg='#ffffff')
     main_img_background = Label(frame_main, image=main_img).pack()
 
-    frame_title = Frame(root, height=40, bg='#ffffff')
     frame_items = Frame(root)
     items_top = Frame(frame_items, bg='#ffffff')
     items_below = Frame(frame_items, bg='#ffffff')
 
-    #Label(text='Select Menu', font='Kanit 24', bg='#ffffff').pack()
     btn_img = {1: PhotoImage(file='image/item_top_1(2).png'),
             2: PhotoImage(file='image/item_top_2(2).png'),
             3: PhotoImage(file='image/item_top_3(2).png'),
@@ -809,7 +836,7 @@ def mainMenu(): # Complete
 open_menu = 1
 if __name__ == '__main__':
     while open_menu == 1:
-        mainMenu()
+        MainMenu()
         gc.collect()
         print(gc.get_count())
         print('เคลียร์ memmory และ Return MainMenu')
